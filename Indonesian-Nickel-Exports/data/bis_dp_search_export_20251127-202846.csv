@@ -1,0 +1,18 @@
+﻿Time Series Search Export,Search term,Search filters,,Last update of Bilateral exchange rates data,Downloaded at,Source,Source URL,Download URL,About Bilateral exchange rates
+,,TIMESPAN:Timespan,2011-01-01_2024-02-01:,2025-11-27,2025-11-27 21:28 CET,BIS,"https://data.bis.org/topics/CPMI_CT/BIS,WS_XRU,1.0/A.ID.IDR.A?filter=TIMESPAN%3D2011-01-01_2024-02-01","https://data.bis.org/topics/CPMI_CT/BIS,WS_XRU,1.0/A.ID.IDR.A?filter=TIMESPAN%3D2011-01-01_2024-02-01&file_format=csv&format=long&split_frequencies=false&transposed=false&include=code%2Clabel",https://data.bis.org/topics/XRU
+
+DATAFLOW_ID:Dataflow ID,KEY:Timeseries Key,FREQ:Frequency,REF_AREA:Reference area,CURRENCY:Currency,COLLECTION:Collection,Unit,Unit multiplier,TIME_PERIOD:Period,OBS_CONF:Confidentiality,OBS_PRE_BREAK:Pre-break value,OBS_STATUS:Status,OBS_VALUE:Value
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2011-12-31,F:Free,,A:Normal value,8775.591679
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2012-12-31,F:Free,,A:Normal value,9377.96342
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2013-12-31,F:Free,,A:Normal value,10422.339464
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2014-12-31,F:Free,,A:Normal value,11864.430022
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2015-12-31,F:Free,,A:Normal value,13405.435619
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2016-12-31,F:Free,,A:Normal value,13301.229781
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2017-12-31,F:Free,,A:Normal value,13380.652966
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2018-12-31,F:Free,,A:Normal value,14242.187528
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2019-12-31,F:Free,,A:Normal value,14145.226968
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2020-12-31,F:Free,,A:Normal value,14562.643392
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2021-12-31,F:Free,,A:Normal value,14306.986058
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2022-12-31,F:Free,,A:Normal value,14853.914859
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2023-12-31,F:Free,,A:Normal value,15243.688508
+"BIS,WS_XRU,1.0",A.ID.IDR.A,A:Annual,ID:Indonesia,IDR:Rupiah,A:Average of observations through period,Rupiah,Units,2024-12-31,F:Free,,A:Normal value,15854.853411
