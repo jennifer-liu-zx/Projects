@@ -1,0 +1,468 @@
+---
+title: "Additional Plots"
+author: "Jennifer Liu"
+date: "2025-06-16"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(lubridate)
+```
+
+
+```{r}
+chosen_1 <- c("Ireland", "Switzerland", "Brunei Darussalam", "Austria", "Denmark", "United States", "Netherlands")
+chosen_2 <- c("Ireland", "Qatar", "Switzerland", "United States", "Brunei Darussalam", "United Arab Emirates")
+chosen_3 <- c("Indonesia", "Australia", "Viet Nam", "Lao PDR", "Thailand", "Japan")
+chosen_4 <- c("Australia", "Korea, Rep.", "Thailand", "Indonesia", "Indonesia", "Viet Nam", "Brunei Darussalam", "Lao PDR", "Japan", "Malaysia")
+chosen_combined <- unique(c(chosen_1, chosen_2, chosen_3, chosen_4))
+```
+
+
+```{r}
+data_LFPR_AgeGroups_raw <- read_csv("../data/data_LFPR_AgeGroups.csv") %>%
+  mutate(`Age Group` = str_sub(...1, 56, 65), .before = ...1) %>%
+  select(`Age Group`, `2024`) %>%
+  arrange(`Age Group`)
+data_FLFPR_AgeGroups <- data_LFPR_AgeGroups_raw[1:11,]
+data_MLFPR_AgeGroups <- data_LFPR_AgeGroups_raw[12:22,] %>%
+  mutate(`Age Group` = str_c("Ag", `Age Group`))
+
+data_combined <- data_FLFPR_AgeGroups %>%
+  left_join(data_MLFPR_AgeGroups, by = c("Age Group"), suffix = c("_f", "_m")) %>%
+  pivot_longer(`2024_f`:`2024_m`, names_to = "Gender", values_to = "LFPR") %>%
+  mutate(Gender = ifelse(Gender == "2024_f", "Female", "Male"))
+
+ggplot(data_combined, aes(x = `Age Group`, y = LFPR)) + 
+  geom_point(aes(group = Gender, colour = Gender), size = 2.4) + 
+  geom_line(aes(group = Gender, colour = Gender), size = 1.2) + 
+  scale_colour_manual(values = c("darkorange2", "darkcyan")) +
+  geom_vline(xintercept = "Aged 30-34", linetype = 2) +
+  annotate(geom = "text", x = 4.25, y = 29, 
+           label = "Median age of mothers at marriage\nand at first birth in 2024", size = 3.2, hjust = 0) + 
+  labs(title = "Labour Force Participation Rate in Singapore, 2024",
+       subtitle = "By gender and age group",
+       x = "Age Group", y = "LFPR (%)",
+       caption = "Source: International Labour Organisation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        legend.position = "top")
+
+ggplot(data_combined, aes(x = `Age Group`, y = LFPR)) + 
+  geom_col(aes(group = Gender, fill = Gender), width = 0.5, position = "dodge") + 
+  scale_fill_manual(values = c("darkorange2", "darkcyan")) +
+  labs(title = "Labour Force Participation Rate in Singapore, 2024",
+       subtitle = "By gender and age group",
+       x = "Age Group", y = "LFPR (%)",
+       caption = "Source: International Labour Organisation") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        legend.position = "top")
+```
+
+```{r}
+takeUpRate <- read.csv("../data/TakeupRateofGovernmentPaidLeaveSchemes.csv") %>%
+  select(Year, Takeup_Rate_of_Government_Paid_Maternity_Leave, Takeup_Rate_of_Government_Paid_Paternity_Leave) %>%
+  rename(`Maternity Leave` = Takeup_Rate_of_Government_Paid_Maternity_Leave,
+         `Paternity Leave` = Takeup_Rate_of_Government_Paid_Paternity_Leave) %>%
+  pivot_longer(`Maternity Leave`:`Paternity Leave`, names_to = "Parental Leave", values_to = "tur") %>%
+  mutate(tur = as.numeric(substr(tur, 1, 2))) %>%
+  add_row(Year = c(2022, 2022, 2023, 2023), 
+          `Parental Leave` = c("Maternity Leave", "Paternity Leave", "Maternity Leave", "Paternity Leave"),
+          tur = c(74, 53, 74, 56))
+
+ggplot(takeUpRate, aes(x = Year, y = tur)) + 
+  geom_point(aes(group = `Parental Leave`, colour = `Parental Leave`), size = 2.4) + 
+  geom_line(aes(group = `Parental Leave`, colour = `Parental Leave`), size = 1.2) + 
+  geom_text(aes(y = tur - 3, label = paste0(tur, "%")), size = 3.5) +
+  scale_colour_manual(values = c("darkorange2", "darkcyan")) +
+  labs(title = "Take Up Rate of Government-Paid Parental Leave, 2016-2023",
+       x = "Year", y = "Take Up Rate (%)",
+       caption = "Source: MSF (Ministry of Social and Family Development)") +
+  scale_y_continuous(breaks = (8:16) * 5, limits = c(40, 82)) +
+#  scale_y_continuous(breaks = (4:8) * 10, limits = c(40, 85)) +
+  scale_x_continuous(breaks = 2016:2023) +
+  theme_minimal() +
+  theme(panel.grid.minor = element_blank(), legend.position = "top")
+```
+
+```{r}
+data_MaternityLeave <- read.csv("../data/data_MaternityLeave.csv")
+data_PaternityLeave <- read.csv("../data/data_PaternityLeave.csv")
+```
+
+```{r}
+data_MaternityLeave_tidy <- data_MaternityLeave %>%
+  select(country, MaternityLeave_LengthInWeeks_numOfWeeks_YearFree) %>%
+  rename(Maternity.Leave = MaternityLeave_LengthInWeeks_numOfWeeks_YearFree) %>%
+  mutate(country = recode(country,
+                          "DR Congo" = "Congo, Dem. Rep.",
+                          "Republic of the Congo" = "Congo, Rep.",
+                          "Egypt" = "Egypt, Arab Rep.",
+                          "Gambia" = "Gambia, The",
+                          "Syria" = "Syrian Arab Republic",
+                          "Palestine" = "West Bank and Gaza",
+                          "Ivory Coast" = "Cote d'Ivoire",
+                          "Kyrgyzstan" = "Kyrgyz Republic",
+                          "Cape Verde" = "Cabo Verde",
+                          "Laos" = "Lao PDR",
+                          "Iran" = "Iran, Islamic Rep.",
+                          "Bahamas" = "Bahamas, The",
+                          "Brunei" = "Brunei Darussalam",
+                          "South Korea" = "Korea, Rep.",
+                          "Vietnam" = "Viet Nam",
+                          "Saint Kitts and Nevis" = "St. Kitts and Nevis",
+                          "Sint Maarten" = "Sint Maarten (Dutch part)",
+                          "Turkey" = "Turkiye",
+                          "Czech Republic" = "Czechia",
+                          "Macau" = "Macao SAR, China",
+                          "Russia" = "Russian Federation",
+                          "Hong Kong" = "Hong Kong SAR, China",
+                          "Slovakia" = "Slovak Republic",
+                          "United States Virgin Islands" = "Virgin Islands (U.S.)",
+                          "Saint Vincent and the Grenadines" = "St. Vincent and the Grenadines",
+                          "Saint Lucia" = "St. Lucia",
+                          "Micronesia" = "Micronesia, Fed. Sts.",
+                          "North Korea" = "Korea, Dem. People's Rep.",
+                          "Venezuela" = "Venezuela, RB",
+                          "Yemen" = "Yemen, Rep.",
+                          "Saint Martin" = "St. Martin (French part)")) %>%
+  mutate(Maternity.Leave.Days = Maternity.Leave * 7) %>%
+  select(-Maternity.Leave)
+```
+
+```{r}
+data_PaternityLeave_tidy <- data_PaternityLeave %>%
+  select(country, PaternityLeave_DaysOfPaternityLeave_num_YearFree) %>%
+  rename(Paternity.Leave.Days = PaternityLeave_DaysOfPaternityLeave_num_YearFree) %>%
+  mutate(country = recode(country,
+                          "DR Congo" = "Congo, Dem. Rep.",
+                          "Republic of the Congo" = "Congo, Rep.",
+                          "Egypt" = "Egypt, Arab Rep.",
+                          "Gambia" = "Gambia, The",
+                          "Syria" = "Syrian Arab Republic",
+                          "Palestine" = "West Bank and Gaza",
+                          "Ivory Coast" = "Cote d'Ivoire",
+                          "Kyrgyzstan" = "Kyrgyz Republic",
+                          "Cape Verde" = "Cabo Verde",
+                          "Laos" = "Lao PDR",
+                          "Iran" = "Iran, Islamic Rep.",
+                          "Bahamas" = "Bahamas, The",
+                          "Brunei" = "Brunei Darussalam",
+                          "South Korea" = "Korea, Rep.",
+                          "Vietnam" = "Viet Nam",
+                          "Saint Kitts and Nevis" = "St. Kitts and Nevis",
+                          "Sint Maarten" = "Sint Maarten (Dutch part)",
+                          "Turkey" = "Turkiye",
+                          "Czech Republic" = "Czechia",
+                          "Macau" = "Macao SAR, China",
+                          "Russia" = "Russian Federation",
+                          "Hong Kong" = "Hong Kong SAR, China",
+                          "Slovakia" = "Slovak Republic",
+                          "United States Virgin Islands" = "Virgin Islands (U.S.)",
+                          "Saint Vincent and the Grenadines" = "St. Vincent and the Grenadines",
+                          "Saint Lucia" = "St. Lucia",
+                          "Micronesia" = "Micronesia, Fed. Sts.",
+                          "North Korea" = "Korea, Dem. People's Rep.",
+                          "Venezuela" = "Venezuela, RB",
+                          "Yemen" = "Yemen, Rep.",
+                          "Saint Martin" = "St. Martin (French part)"))
+```
+
+```{r}
+parental_leave <- data_MaternityLeave_tidy %>%
+  left_join(data_PaternityLeave_tidy, by = c("country")) %>%
+  replace_na(list(Maternity.Leave.Days = 0, Paternity.Leave.Days = 0))
+
+parental_leave[parental_leave$country=="Denmark", "Maternity.Leave.Days"] <- 24 * 7
+parental_leave[parental_leave$country=="Denmark", "Paternity.Leave.Days"] <- 24 * 7
+parental_leave[parental_leave$country=="Singapore", "Paternity.Leave.Days"] <- 28
+
+
+parental_leave <- parental_leave %>%
+  mutate(Total = Maternity.Leave.Days + Paternity.Leave.Days)
+
+ggplot(parental_leave %>% filter(country %in% c(chosen_1, chosen_3, "Singapore")), 
+       aes(y = factor(country, levels=parental_leave %>% arrange(Total) %>% pull(country)))) +
+  geom_col(aes(x = Paternity.Leave.Days), fill = "darkcyan", width = 0.5) +
+  geom_text(aes(x = Paternity.Leave.Days + 5,
+                label = Paternity.Leave.Days),
+            colour = "black", size=3, hjust = 0) +
+  geom_col(aes(x = - Maternity.Leave.Days), fill = "darkorange", width = 0.5) +
+  geom_text(aes(x = - Maternity.Leave.Days - 5,
+                label = round(Maternity.Leave.Days, 0)),
+            colour = "black", size=3, hjust = 1) +
+  geom_vline(xintercept = - 14 * 7, linetype = 2, alpha = 0.5) +
+  geom_vline(xintercept = 0) +
+  scale_x_continuous(limits = c(-250, 400), breaks = (-4:4) * 100, labels = abs) +
+  scale_y_discrete(expand = expansion(add = c(0, 1.5))) +
+  annotate(geom = "text", x = -125, y = 14,
+           label = "Maternity Leave", colour = "darkorange", fontface = "bold") +
+  annotate(geom = "text", x = 200, y = 14,
+           label = "Paternity Leave", colour = "darkcyan", fontface = "bold") +
+  labs(title = "Parental leave in selected comparator countries",
+       subtitle = "Total paid or partially paid parental leave by default (without extensions)",
+       caption = "Source: World Population Review (and others)",
+       x = "Number of days of parental leave", y = "Country") +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank())
+```
+
+```{r}
+parental_leave2 <- parental_leave
+
+parental_leave2[parental_leave2$country=="Denmark", "Maternity.Leave.Days"] <- 11 * 7
+parental_leave2[parental_leave2$country=="Denmark", "Paternity.Leave.Days"] <- 11 * 7
+parental_leave2[parental_leave2$country=="Singapore", "Paternity.Leave.Days"] <- 28
+parental_leave2[parental_leave2$country=="Austria", "Paternity.Leave.Days"] <- 4 * 7
+parental_leave2[parental_leave2$country=="Australia", "Maternity.Leave.Days"] <- 3 * 7
+parental_leave2[parental_leave2$country=="Australia", "Paternity.Leave.Days"] <- 3 * 7
+parental_leave2[parental_leave2$country=="Ireland", "Maternity.Leave.Days"] <- 42 * 7
+parental_leave3 <- parental_leave2 %>% 
+  filter(country %in% c(chosen_1, chosen_3, "Singapore")) %>%
+  mutate(Total = Maternity.Leave.Days + Paternity.Leave.Days,
+         Maternity.Leave.Days = as.numeric(Maternity.Leave.Days),
+         Paternity.Leave.Days = as.numeric(Paternity.Leave.Days)) %>% 
+  arrange(Total)
+parental_leave4 <- cbind(parental_leave3,
+                         Shared.Leave.Days = c(21 * 7, 0, 0, 0, 0, 0,
+                                               0, 365, 88 * 7, 42, 26 * 7, 
+                                               0, 0)) %>%
+  mutate(total_maternal = Maternity.Leave.Days + Shared.Leave.Days / 2,
+         total_paternal = Paternity.Leave.Days + Shared.Leave.Days / 2,
+         total_total = total_maternal + total_paternal) %>%
+  mutate(total_maternal = round(total_maternal / 7),
+         total_paternal = round(total_paternal / 7),
+         Shared.Leave.Days = round(Shared.Leave.Days / 7)) %>%
+  arrange(total_total)
+
+ggplot(parental_leave4, 
+       aes(y = factor(country, levels=parental_leave4 %>% pull(country)))) +
+  geom_col(aes(x = total_paternal, fill = "Paternity Leave"), width = 0.7) +
+  geom_text(aes(x = total_paternal + 2,
+                label = round(total_paternal)),
+            colour = "black", size=3, hjust = 0) +
+  geom_col(aes(x = - total_maternal, fill = "Maternity Leave"), width = 0.7) +
+  geom_text(aes(x = - total_maternal - 2,
+                label = round(total_maternal)),
+            colour = "black", size=3, hjust = 1) +
+  geom_col(aes(x = Shared.Leave.Days / 2, fill = "Shared Parental Leave"), width = 0.7) +
+  geom_col(aes(x = - Shared.Leave.Days / 2, fill = "Shared Parental Leave"), width = 0.7) +
+  scale_fill_manual(breaks = c("Paternity Leave", "Maternity Leave", "Shared Parental Leave"),
+                    values = c("darkcyan", "darkorange", "darkgoldenrod1"),
+                    name = "Parental Leave Type") +
+  geom_vline(xintercept = - 14, linetype = 2, alpha = 0.5) +
+  geom_vline(xintercept = 0) +
+  scale_x_continuous(limits = c(-63, 50), breaks = (-7:6) * 10, labels = abs) +
+  # annotate(geom = "text", x = -225, y = 14,
+  #          label = "Maternity Leave", colour = "darkorange", fontface = "bold") +
+  # annotate(geom = "text", x = 200, y = 14,
+  #          label = "Paternity Leave", colour = "darkcyan", fontface = "bold") +
+  labs(title = "Parental leave in selected comparator countries",
+       subtitle = "Total paid and unpaid parental leave by default",
+       caption = "Source: World Population Review (and others)",
+       x = "Number of weeks of parental leave", y = "") +
+  theme_minimal() +
+  theme(panel.grid.major.y = element_blank(),
+        legend.position = "top")
+```
+
+```{r}
+parental_leave_2 <- read.csv("../data/data_ParentalLeave_OECD.csv") %>%
+  drop_na() %>%
+  rename(Paternity.Leave.Days = "Length.of.paid.parental.leave.for.father..calendar.days.",
+         Maternity.Leave.Days = "Length.of.paid.parental.leave.for.mother..calendar.days.") %>%
+  mutate(Total = Paternity.Leave.Days + Maternity.Leave.Days) %>%
+  arrange("Total") 
+  
+ggplot(parental_leave_2 %>% filter(Economy %in% c(chosen_1, chosen_3, "Singapore")), aes(y = factor(Economy, levels=parental_leave_2 %>% pull(Economy)))) +
+  geom_col(aes(x = Paternity.Leave.Days), fill = "darkcyan", width = 0.5) +
+  geom_text(aes(x = Paternity.Leave.Days + 5,
+                label = Paternity.Leave.Days),
+            colour = "black", size=3, hjust = 0) +
+  geom_col(aes(x = - Maternity.Leave.Days), fill = "darkorange", width = 0.5) +
+  geom_text(aes(x = - Maternity.Leave.Days - 5,
+                label = round(Maternity.Leave.Days, 0)),
+            colour = "black", size=3, hjust = 1) +
+  geom_vline(xintercept = - 14 * 7, linetype = 2, alpha = 0.5) +
+  labs(title = "Parental leave in selected comparator countries",
+       x = "Number of days of parental leave", y = "Country") +
+  scale_x_continuous(limits = c(-400, 400), breaks = (-4:1) * 50, labels = abs) +
+  theme_minimal() +
+  theme()
+```
+
+```{r}
+data_SGFWAs_topline <- read.csv("../data/fwas/Proportion of Establishments Offering Scheduled Flexible Work Arrangements - Topline.csv")
+data_SGFWAs_ind1 <- read.csv("../data/fwas/Proportion of Establishments Offering Scheduled Flexible Work Arrangements - Industry (Level 1).csv")
+data_SGFWAs_ind2 <- read.csv("../data/fwas/Proportion of Establishments Offering Scheduled Flexible Work Arrangements - Industry (Level 2).csv")
+data_SGFWAs_ind3 <- read.csv("../data/fwas/Proportion of Establishments Offering Scheduled Flexible Work Arrangements - Industry (Level 3).csv")
+```
+
+```{r}
+ggplot(data_SGFWAs_ind2 %>% filter(year == 2023) %>% mutate (job_sharing = as.numeric(job_sharing)) %>% drop_na(),
+       aes(x = factor(industry2, levels = data_SGFWAs_ind2 %>% filter(year == 2023) %>% arrange(-as.numeric(job_sharing)) %>% pull(industry2)))) +
+  geom_col(aes(y = job_sharing, fill = industry1), width = 0.5) +
+  scale_fill_brewer(palette = "Dark2", name = "Sector") +
+  labs(title = "Availability of job-sharing in each industry, 2023",
+       subtitle = "Percentage of establishments where job-sharing is available",
+       x = "Industry", y = "Proportion of establishments (%)",
+       caption = "Source: Ministry of Manpower (MOM)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle=60, hjust=1),
+        legend.position = "bottom")
+```
+
+```{r}
+ggplot(data_SGFWAs_ind2 %>% filter(year == 2023) %>% mutate (teleworking = as.numeric(teleworking)) %>% drop_na(),
+       aes(x = factor(industry2, levels = data_SGFWAs_ind2 %>% filter(year == 2023) %>% arrange(-as.numeric(teleworking)) %>% pull(industry2)))) +
+  geom_col(aes(y = teleworking, fill = industry1), width = 0.5) +
+  scale_fill_brewer(palette = "Dark2", name = "Sector") +
+  labs(title = "Availability of job-sharing in each industry, 2023",
+       subtitle = "Percentage of establishments where job-sharing is available",
+       x = "Industry", y = "Proportion of establishments (%)",
+       caption = "Source: Ministry of Manpower (MOM)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle=60, hjust=1))
+```
+
+```{r}
+ggplot(data_SGFWAs_ind2 %>% filter(year == 2023) %>% mutate (at_least_one = as.numeric(at_least_one)) %>% drop_na(),
+       aes(x = factor(industry2, levels = data_SGFWAs_ind2 %>% filter(year == 2023) %>% arrange(-as.numeric(at_least_one)) %>% pull(industry2)))) +
+  geom_col(aes(y = at_least_one, fill = industry1), width = 0.5) +
+  scale_fill_brewer(palette = "Dark2", name = "Sector") +
+  labs(title = "Availability of any FWA in each industry, 2023",
+       subtitle = "Percentage of establishments where any FWA is available",
+       x = "Industry", y = "Proportion of establishments (%)",
+       caption = "Source: Ministry of Manpower (MOM)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle=60, hjust=1),
+        legend.position = "bottom")
+```
+
+
+```{r}
+ggplot(data_SGFWAs_topline %>%
+         filter(year >= 2011) %>%
+         select(-at_least_one, -job_sharing) %>%
+         pivot_longer(flexihours:homeworking, names_to = "Type", values_to = "Proportion") %>%
+         mutate(Type = recode(Type,
+                              "flexihours" = "Flexihours",
+                              "homeworking" = "Homeworking",
+                              "parttime_work" = "Parttime work",
+                              "staggered_hours" = "Staggered hours",
+                              "teleworking" = "Teleworking")),
+       aes(x = year)) +
+  geom_line(aes(y = Proportion, group = Type, colour = Type), linewidth=1) +
+  geom_point(aes(y = Proportion, group = Type, colour = Type), size = 2) +
+  geom_line(data=data_SGFWAs_topline %>%
+         filter(year >= 2011) %>%
+         select(year, job_sharing),
+         aes(x = year, y = job_sharing, colour = "Job sharing"), linewidth=1.2) +
+  geom_point(data=data_SGFWAs_topline %>%
+         filter(year >= 2011) %>%
+         select(year, job_sharing),
+         aes(x = year, y = job_sharing, colour = "Job sharing"), size = 2) +
+  scale_colour_manual(breaks = c("Flexihours", "Homeworking", "Staggered hours", "Teleworking", "Job sharing"),
+                      values = c("#9ECAE1", "#6BAED6", "#2171B5", "#08306B", "tomato")) +
+  labs(title = "Availability of FWAs, 2011 - 2023",
+       subtitle = "Percentage of establishments where any FWA is available",
+       x = "Year", y = "Proportion of establishments (%)",
+       caption = "Source: Ministry of Manpower (MOM)") +
+  scale_x_continuous(limits = c(2011, 2023), breaks = 2011:2023) +
+  theme_minimal() +
+  theme(panel.grid.minor.x = element_blank())
+
+```
+
+```{r}
+births <- read.csv("../data/data_Births.csv", skip=9) %>%
+  filter(Data.Series == "Total Live-Births (Number)") %>%
+  select(Data.Series, X2024:X2007) %>%
+  pivot_longer(X2024:X2007, names_to = "Year", values_to = "Births") %>%
+  arrange(Year) %>%
+  mutate(Year = str_remove(Year, "X")) %>%
+  mutate(num_child = lag(Births, 5) + lag(Births, 4) + lag(Births, 3) + lag(Births, 2) + lag(Births, 1) / 2,
+         num_infant = Births * 5/6 + lag(Births, 1) / 2) %>%
+  filter(Year >= 2013)
+```
+
+```{r}
+Childcare <- read.csv("../data/data_Childcare.csv", skip=10)[0:2,] %>%
+  pivot_longer(X2024:X2013, names_to = "Year", values_to = "Childcare") %>%
+  mutate(Year = str_remove(Year, "X")) %>%
+  pivot_wider(names_from = Data.Series, values_from = Childcare)
+
+ggplot(Childcare, aes(x = as.numeric(Year))) + 
+  geom_col(aes(y = `Total Number Of Places In Childcare` / 1000, 
+               fill = "Total Number Of Places In Childcare"), 
+           width = 0.8) + 
+  geom_text(aes(y = `Total Number Of Places In Childcare` / 1000 - 5, 
+                label = round(`Total Number Of Places In Childcare` / 1000)),
+            colour = "black", size = 3) + 
+  geom_col(aes(y = `Total Enrolment In Childcare` / 1000,
+               fill = "Total Enrolment In Childcare"), width = 0.8) + 
+  geom_text(aes(y = `Total Enrolment In Childcare` / 1000 - 5, 
+                label = round(`Total Enrolment In Childcare` / 1000)),
+            colour = "white", size = 3) + 
+  scale_fill_manual(breaks = c("Total Number Of Places In Childcare", "Total Enrolment In Childcare"),
+                    values = c("#A9CCEE", "#072C62")) +
+  geom_point(data = births, aes(x = as.numeric(Year), y = num_child / 1000,
+                                colour = "Eligible Children")) +
+  geom_line(data = births, aes(x = as.numeric(Year), y = num_child / 1000,
+                               colour = "Eligible Children")) +
+  scale_colour_manual(breaks = c("Eligible Children"), values = c("black"),
+                      labels = c("Number of Children Eligble for Childcare Centres (18 months - 6 years old)")) +
+  scale_x_continuous(limits = c(2012.5, 2024.5), breaks = 2013:2024) +
+  labs(title = "Number of Places and Enrollment in \nChildcare Centres (thousands), 2013-2024",
+       x = "Year", y = "",
+       caption = "Source: MOM (Ministry of Manpower)") +
+  theme_minimal() +
+  theme(panel.grid.minor = element_blank(), panel.grid.major.x = element_blank(),
+        legend.box = "vertical", legend.spacing.y = unit(-0.3, 'cm')) + 
+  guides(fill = guide_legend(theme(legend.title = ""), position = "top"),
+         colour = guide_legend(theme(legend.title = ""), position = "top"))
+```
+```{r}
+InfantCare <- read.csv("../data/data_InfantCare.csv", skip=10)[0:2,] %>%
+  pivot_longer(X2024:X2013, names_to = "Year", values_to = "InfantCare") %>%
+  mutate(Year = str_remove(Year, "X")) %>%
+  pivot_wider(names_from = Data.Series, values_from = InfantCare)
+
+ggplot(InfantCare, aes(x = as.numeric(Year))) + 
+  geom_col(aes(y = `Total Number Of Places In Infant Care` / 1000, 
+               fill = "Total Number Of Places In Infant Care"), 
+           width = 0.8) + 
+  geom_text(aes(y = `Total Number Of Places In Infant Care` / 1000 - 1, 
+                label = round(`Total Number Of Places In Infant Care` / 1000, 1)),
+            colour = "black", size = 3) + 
+  geom_col(aes(y = `Total Enrolment In Infant Care` / 1000,
+               fill = "Total Enrolment In Infant Care"), width = 0.8) + 
+  geom_text(aes(y = `Total Enrolment In Infant Care` / 1000 - 1, 
+                label = round(`Total Enrolment In Infant Care` / 1000, 1)),
+            colour = "white", size = 3) + 
+  scale_fill_manual(breaks = c("Total Number Of Places In Infant Care", "Total Enrolment In Infant Care"),
+                    values = c("#A9CCEE", "#072C62")) +
+  geom_point(data = births, aes(x = as.numeric(Year), y = num_infant / 1000,
+                                colour = "Eligible Infants")) +
+  geom_line(data = births, aes(x = as.numeric(Year), y = num_infant / 1000,
+                               colour = "Eligible Infants")) +
+  geom_text(data = births, aes(x = as.numeric(Year), y = num_infant / 1000 - 2, label = round(num_infant / 1000, 1)),
+            colour = "black", size = 3) +
+  scale_colour_manual(breaks = c("Eligible Infants"), values = c("black"),
+                      labels = c("Number of Infants Eligble for Infant Care Centres (2-17 months old)")) +
+  scale_x_continuous(limits = c(2012.5, 2024.5), breaks = 2013:2024) +
+  labs(title = "Number of Places and Enrollment in \nInfant Care Centres (thousands), 2013-2024",
+       x = "Year", y = "",
+       caption = "Source: MOM (Ministry of Manpower)") +
+  theme_minimal() +
+  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank(),
+        axis.text.y = element_blank(),
+        legend.box = "vertical", legend.spacing.y = unit(-0.3, 'cm')) + 
+  guides(fill = guide_legend(theme(legend.title = ""), position = "top"),
+         colour = guide_legend(theme(legend.title = ""), position = "top"))
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

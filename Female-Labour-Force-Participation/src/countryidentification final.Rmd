@@ -1,0 +1,1102 @@
+---
+title: "Quantitative Similarity Analysis for Country Identification"
+author: "Jennifer Liu"
+date: "2025-06-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Set ups
+
+```{r}
+rm(list=ls())
+```
+
+```{r}
+library(tidyverse)
+library(stringr)
+library(lubridate)
+library(reshape2)
+library(ggrepel)
+library(ggthemes)
+```
+
+## Read in the data
+
+### LFPR
+
+```{r}
+data_FemaleLFPR <- read.csv("../data/data_FemaleLFPR.csv", skip=4)
+data_LFPR <- read.csv("../data/data_LFPR.csv", skip=4)
+```
+
+### Demogrpahic characteristics
+
+```{r}
+data_PropFemale <- read.csv("../data/data_Population%Female.csv", skip=4)
+data_PopulationAgeStructure <- read.csv("../data/data_PopulationAgeStructure.csv", skip=0)
+data_Population <- read.csv("../data/data_Population.csv", skip=4)
+data_FertilityRate <- read.csv("../data/data_FertilityRate.csv", skip=4)
+data_TertiaryEducation <- read.csv("../data/data_TertiaryEducation.csv", skip=4)
+```
+
+### Economic characteristics
+
+```{r}
+data_GDPPerCapita <- read.csv("../data/data_GDPPerCapita.csv", skip=4)
+data_Unemployment <- read.csv("../data/data_Unemployment.csv", skip=4)
+data_GiniCoefficient <- read.csv("../data/data_GiniCoefficient.csv", skip=4)
+data_Agriculture <- read.csv("../data/data_Agriculture.csv", skip=4)
+data_Manufacturing <- read.csv("../data/data_Manufacturing.csv", skip=4)
+data_Industry <- read.csv("../data/data_Industry.csv", skip=4)
+data_Services <- read.csv("../data/data_Services.csv", skip=4)
+data_ServicesEmployment <- read.csv("../data/data_ServiceEmployment.csv", skip=4)
+```
+
+### Cultural characteristics
+
+```{r}
+data_ExpenditureonFamily <- read.csv("../data/data_GDP%ExpenditureonFamily.csv", skip=0)
+data_ExpenditureonIncapacity <- read.csv("../data/data_GDP%ExpenditureonIncapacity.csv", skip=0)
+data_WelfareCoverage <- read.csv("../data/data_Population%Covered.csv", skip=0)
+data_GenderPayGap <- read.csv("../data/data_GenderPayGap.csv")
+data_MaternityLeave <- read.csv("../data/data_MaternityLeave.csv")
+data_PaternityLeave <- read.csv("../data/data_PaternityLeave.csv")
+data_GenderEquality <- read.csv("../data/data_GenderEquality.csv")
+data_AttitudesonGenderRoles <- read.csv("../data/data_AttitudesonGenderRoles.csv")
+```
+
+## Tidy data
+
+First, finding non-coutntry datapoints from World Bank data to be filtered out later:
+
+```{r}
+nonCountryDatapointsa <- c("Africa Eastern and Southern",
+                           "Africa Western and Central",
+                          "Arab World", 
+                          "Caribbean small states",
+                          "Central Europe and the Baltics",
+                          "Early-demographic dividend",
+                          "East Asia & Pacific",
+                          "East Asia & Pacific (IDA & IBRD countries)",
+                          "East Asia & Pacific (excluding high income)",
+                          "Euro area",
+                          "Europe & Central Asia",
+                          "Europe & Central Asia (IDA & IBRD countries)",
+                          "Europe & Central Asia (excluding high income)",
+                          "European Union",
+                          "Fragile and conflict affected situations",
+                          "Heavily indebted poor countries (HIPC)",
+                          "High income",
+                          "IBRD only",
+                          "IDA & IBRD total",
+                          "IDA blend",
+                          "IDA only",
+                          "IDA total",
+                          "Late-demographic dividend",
+                          "Latin America & Caribbean",
+                          "Latin America & Caribbean (excluding high income)",
+                          "Latin America & Caribbean (excluding high income) LAC",
+                          "Latin America & the Caribbean (IDA & IBRD countries)",
+                          "Latin America & the Caribbean (IDA & IBRD countries) TLA",
+                          "Least developed countries: UN classification",
+                          "Low & middle income",
+                          "Low income",
+                          "Lower middle income",
+                          "Middle East & North Africa",
+                          "Middle East & North Africa (IDA & IBRD countries)",
+                          "Middle East & North Africa (excluding high income)",
+                          "Middle income",
+                          "North America",
+                          "Not classified",
+                          "OECD members",
+                          "Other small states",
+                          "Pacific island small states",
+                          "Post-demographic dividend",
+                          "Pre-demographic dividend",
+                          "Small states",
+                          "South Asia",
+                          "South Asia (IDA & IBRD)",
+                          "Sub-Saharan Africa",
+                          "Sub-Saharan Africa (IDA & IBRD countries)",
+                          "Sub-Saharan Africa (excluding high income)",
+                          "Upper middle income",
+                          "World")
+```
+
+Function for cleaning World Bank data:
+
+```{r}
+clean_WB <- function(df, measure) {
+  dplyr::filter(df, ! Country.Name %in% nonCountryDatapointsa) %>%
+    select(Country.Name, Country.Code, X2020:X2024) %>%
+    pivot_longer(
+      cols      = X2020:X2024,
+      names_to  = "Year",
+      values_to = "value"
+    ) %>%
+    drop_na(value) %>%
+    group_by(Country.Name) %>%
+    summarise(
+      value = last(value),
+      Country.Code = last(Country.Code),
+      .groups = "drop"
+    ) %>%
+    rename(!!measure := value)
+}
+```
+
+### Demogrpahic characteristics
+
+```{r}
+head(data_FemaleLFPR)
+```
+
+```{r}
+head(data_LFPR)
+```
+
+```{r}
+data_FemaleLFPR_tidy <- clean_WB(data_FemaleLFPR, "Female.LFPR")
+data_LFPR_tidy <- clean_WB(data_LFPR, "LFPR")
+```
+
+```{r}
+head(data_FemaleLFPR_tidy)
+```
+
+```{r}
+head(data_PropFemale)
+```
+
+```{r}
+head(data_PopulationAgeStructure)
+```
+
+```{r}
+head(data_Population)
+```
+
+```{r}
+head(data_FertilityRate)
+```
+
+```{r}
+data_Population_tidy <- clean_WB(data_Population, "Population")
+data_FertilityRate_tidy <- clean_WB(data_FertilityRate, "Fertility.Rate")
+data_TertiaryEducation_tiday <- clean_WB(data_TertiaryEducation, "Tertiary.Education")
+```
+
+```{r}
+data_PropFemale_tidy <- clean_WB(data_PropFemale, "Prop.Female")
+PAS_temp <- data_PopulationAgeStructure %>%
+  rename(X0to14_2024 = AgeStructure_PctAt0To14_pct_2024,
+         X15to65_2024 = AgeStructure_PctAt15To64_pct_2024,
+         X65plus_2024 = AgeStructure_PctAt65Plus_pct_2024) %>%
+  mutate(country =  recode(country,
+                          "DR Congo" = "Congo, Dem. Rep.",
+                          "Republic of the Congo" = "Congo, Rep.",
+                          "Egypt" = "Egypt, Arab Rep.",
+                          "Gambia" = "Gambia, The",
+                          "Syria" = "Syrian Arab Republic",
+                          "Palestine" = "West Bank and Gaza",
+                          "Ivory Coast" = "Cote d'Ivoire",
+                          "Kyrgyzstan" = "Kyrgyz Republic",
+                          "Cape Verde" = "Cabo Verde",
+                          "Laos" = "Lao PDR",
+                          "Iran" = "Iran, Islamic Rep.",
+                          "Bahamas" = "Bahamas, The",
+                          "Brunei" = "Brunei Darussalam",
+                          "South Korea" = "Korea, Rep.",
+                          "Vietnam" = "Viet Nam",
+                          "Saint Kitts and Nevis" = "St. Kitts and Nevis",
+                          "Sint Maarten" = "Sint Maarten (Dutch part)",
+                          "Turkey" = "Turkiye",
+                          "Czech Republic" = "Czechia",
+                          "Macau" = "Macao SAR, China",
+                          "Russia" = "Russian Federation",
+                          "Hong Kong" = "Hong Kong SAR, China",
+                          "Slovakia" = "Slovak Republic",
+                          "United States Virgin Islands" = "Virgin Islands (U.S.)",
+                          "Saint Vincent and the Grenadines" = "St. Vincent and the Grenadines",
+                          "Saint Lucia" = "St. Lucia",
+                          "Micronesia" = "Micronesia, Fed. Sts.",
+                          "North Korea" = "Korea, Dem. People's Rep.",
+                          "Venezuela" = "Venezuela, RB",
+                          "Yemen" = "Yemen, Rep.",
+                          "Saint Martin" = "St. Martin (French part)"))
+data_PopulationAgeStructure_tidy <- PAS_temp %>%
+  add_row(flagCode = NA, country = "Channel Islands",
+          # weighted average of Jersey and Guernsey
+          # both populations are from World Population Review
+          X0to14_2024 = (PAS_temp[PAS_temp$country=="Jersey", "X0to14_2024"] * 103989 +
+                        PAS_temp[PAS_temp$country=="Guernsey", "X0to14_2024"] * 64477) / 168466,
+          X15to65_2024 = (PAS_temp[PAS_temp$country=="Jersey", "X15to65_2024"] * 103989 +
+                        PAS_temp[PAS_temp$country=="Guernsey", "X15to65_2024"] * 64477) / 168466,
+          X65plus_2024 = (PAS_temp[PAS_temp$country=="Jersey", "X65plus_2024"] * 103989 +
+                        PAS_temp[PAS_temp$country=="Guernsey", "X65plus_2024"] * 64477) / 168466) %>%
+  filter(! country %in% c("Jersey", "Guernsey"))
+```
+
+### Economic characteristics
+
+```{r}
+head(data_GDPPerCapita)
+```
+
+```{r}
+head(data_GiniCoefficient)
+```
+
+```{r}
+data_GDPPerCapita_tidy <- clean_WB(data_GDPPerCapita, "GDP.PC")
+data_GiniCoefficient_tidy <- clean_WB(data_GiniCoefficient, "Gini.Coefficient")
+data_Unemployment_tidy <- clean_WB(data_Unemployment, "Unemployment")
+data_ServicesEmployment_tidy <- clean_WB(data_ServicesEmployment, "Services.Employment")
+```
+
+```{r}
+data_Agriculture_tidy <- clean_WB(data_Agriculture, "Agri")
+data_Manufacturing_tidy <- clean_WB(data_Manufacturing, "Manu")
+data_Industry_tidy <- clean_WB(data_Industry, "Indus")
+data_Services_tidy <- clean_WB(data_Services, "Serv")
+
+data_Sectors <- data_Agriculture_tidy %>%
+  full_join(data_Manufacturing_tidy %>% select(-Country.Code), by = c("Country.Name")) %>%
+  full_join(data_Industry_tidy %>% select(-Country.Code), by = c("Country.Name")) %>%
+  full_join(data_Services_tidy %>% select(-Country.Code), by = c("Country.Name")) %>%
+  mutate(Agri = replace_na(Agri, 0),
+         Manu = replace_na(Manu, 0),
+         Indus = replace_na(Indus, 0),
+         Serv = replace_na(Serv, 0))
+
+sectors_SG <- data_Sectors %>%
+  filter(Country.Name == "Singapore") %>%
+  pivot_longer(c(Agri, Manu, Indus, Serv), names_to = "Sector", values_to = "Prop") %>%
+  pull(Prop)
+
+sectors_all <- data.matrix(
+  data_Sectors %>%
+    select(Agri, Manu, Indus, Serv)
+)
+
+sectors_similarities <- sectors_all %*% sectors_SG
+
+data_Sectors_tidy <- cbind(data_Sectors, Sector.Similarity = sectors_similarities ^ 0.5)
+```
+
+### Cultural characteristics
+
+```{r}
+nonCountryDatepoints2 <- c("APEC", "ASEAN",
+                           "Africa",
+                           "Africa: Low income",
+                           "Africa: Lower-middle income",
+                           "Africa: Upper-middle income",
+                           "Americas",
+                           "Americas: High income",
+                           "Americas: Lower-middle income",
+                           "Americas: Upper-middle income",
+                           "Arab League",
+                           "Arab States",
+                           "Arab States: High income",
+                           "Arab States: Low income",
+                           "Arab States: Lower-middle income",
+                           "Arab States: Upper-middle income",
+                           "Asia and the Pacific",
+                           "Asia and the Pacific: High income",
+                           "Asia and the Pacific: Low income",
+                           "Asia and the Pacific: Lower-middle income",
+                           "Asia and the Pacific: Upper-middle income",
+                           "BRICS", "CARICOM", "Caribbean",
+                           "Central Africa",
+                           "Central America",
+                           "Central Asia",
+                           "Central and Western Asia",
+                           "Central and Western Asia: High income",
+                           "Central and Western Asia: Lower-middle income",
+                           "Central and Western Asia: Upper-middle income",
+                           "Eastern Africa",
+                           "Eastern Asia",
+                           "Eastern Asia: High income",
+                           "Eastern Europe",
+                           "Eastern Europe: High income",
+                           "Eastern Europe: Upper-middle income",
+                           "Europe and Central Asia",
+                           "Europe and Central Asia: High income",
+                           "Europe and Central Asia: Lower-middle income",
+                           "Europe and Central Asia: Upper-middle income",
+                           "European Union 27", "European Union 28",
+                           "G20", "G7",
+                           "Latin America and the Caribbean",
+                           "Latin America and the Caribbean: High income",
+                           "Latin America and the Caribbean: Lower-middle income",
+                           "Latin America and the Caribbean: Upper-middle income",
+                           "MENA",
+                           "Northern Africa",
+                           "Northern Africa: Lower-middle income",
+                           "Northern America",
+                           "Northern America: High income",
+                           "Northern Europe",
+                           "Northern, Southern and Western Europe",
+                           "Northern, Southern and Western Europe: High income",
+                           "Northern, Southern and Western Europe: Upper-middle income",
+                           "Pacific Islands",
+                           "South America",
+                           "South-Eastern Asia",
+                           "South-Eastern Asia and the Pacific",
+                           "South-Eastern Asia and the Pacific: High income",
+                           "South-Eastern Asia and the Pacific: Lower-middle income",
+                           "South-Eastern Asia and the Pacific: Upper-middle income",
+                           "Southern Africa",
+                           "Southern Asia",
+                           "Southern Asia: Lower-middle income",
+                           "Southern Europe",
+                           "Sub-Saharan Africa",
+                           "Sub-Saharan Africa: Low income",
+                           "Sub-Saharan Africa: Lower-middle income",
+                           "Sub-Saharan Africa: Upper-middle income",
+                           "Western Africa",
+                           "Western Asia",
+                           "Western Europe",
+                           "World",
+                           "World excluding BRICS",
+                           "World excluding India and China",
+                           "World: High income",
+                           "World: Low income",
+                           "World: Lower-middle income",
+                           "World: Lower-middle income excluding India",
+                           "World: Upper-middle income",
+                           "World: Upper-middle income excluding China")
+```
+
+```{r}
+WC_temp <- data_WelfareCoverage %>%
+  filter(! ref_area.label %in% nonCountryDatepoints2,
+         sex.label == "Total",
+         classif1.label == "Contingency: Population covered by at least one social protection benefit",
+         time >= 2020) %>%
+  group_by(ref_area.label) %>%
+  summarise(Welfare.Coverage = mean(obs_value)) %>%
+  rename(country = ref_area.label) %>%
+  mutate(country = recode(country,
+                          "Côte d'Ivoire" = "Cote d'Ivoire",
+                          "Bahamas" = "Bahamas, The",
+                          "Congo, Democratic Republic of the" = "Congo, Dem. Rep.",
+                          "Egypt" = "Egypt, Arab Rep.",
+                          "Gambia" = "Gambia, The",
+                          "Kyrgyzstan" = "Kyrgyz Republic",
+                          "Bolivia (Plurinational State of)" = "Bolivia",
+                          "Curaçao" = "Curacao",
+                          "Venezuela (Bolivarian Republic of)" = "Venezuela, RB",
+                          "United States of America" = "United States",
+                          "United Kingdom of Great Britain and Northern Ireland" = "United Kingdom",
+                          "Türkiye" = "Turkiye",
+                          "Occupied Palestinian Territory" = "West Bank and Gaza",
+                          "Macao, China" = "Macao SAR, China",
+                          "Tanzania, United Republic of" = "Tanzania",
+                          "Micronesia (Federated States of)" = "Micronesia, Fed. Sts.",
+                          "Republic of Moldova" = "Moldova",
+                          "Republic of Korea" = "Korea, Rep.",
+                          "Lao People's Democratic Republic" = "Lao PDR",
+                          "Iran (Islamic Republic of)" = "Iran, Islamic Rep.",
+                          "Hong Kong, China" = "Hong Kong SAR, China",
+                          "Saint Kitts and Nevis" = "St. Kitts and Nevis",
+                          "Saint Vincent and the Grenadines" = "St. Vincent and the Grenadines",
+                          "Saint Lucia" = "St. Lucia",
+                          "Slovakia" = "Slovak Republic",
+                          "Yemen" = "Yemen, Rep.",
+                          "United States Virgin Islands" = "Virgin Islands (U.S.)"))
+data_WelfareCoverage_tidy <- WC_temp %>%
+  add_row(country = "Channel Islands",
+          # weighted average of Jersey and Guernsey
+          # both populations are from World Population Review
+          Welfare.Coverage = (WC_temp$Welfare.Coverage[WC_temp$country == "Jersey"] * 103989 +
+                              WC_temp$Welfare.Coverage[WC_temp$country == "Guernsey"] *  6447) / 168466) %>%
+  filter(! country %in% c("Jersey", "Guernsey"))
+```
+
+```{r}
+data_GenderPayGap_tidy <- data_GenderPayGap %>%
+  filter(occupation == "_T",
+         time_period >= 2020) %>%
+  group_by(ref_area_desc) %>%
+  summarise(Pay.Gap = mean(obs_value)) %>%
+  rename(country = ref_area_desc) %>%
+  mutate(country = recode(country,
+                          "Côte d'Ivoire" = "Cote d'Ivoire",
+                          "Bahamas" = "Bahamas, The",
+                          "Congo, Democratic Republic of the" = "Congo, Dem. Rep.",
+                          "Egypt" = "Egypt, Arab Rep.",
+                          "Gambia" = "Gambia, The",
+                          "Kyrgyzstan" = "Kyrgyz Republic",
+                          "Bolivia (Plurinational State of)" = "Bolivia",
+                          "Curaçao" = "Curacao",
+                          "Venezuela (Bolivarian Republic of)" = "Venezuela, RB",
+                          "United States of America" = "United States",
+                          "United Kingdom of Great Britain and Northern Ireland" = "United Kingdom",
+                          "Türkiye" = "Turkiye",
+                          "Occupied Palestinian Territory" = "West Bank and Gaza",
+                          "Macao, China" = "Macao SAR, China",
+                          "Tanzania, United Republic of" = "Tanzania",
+                          "Micronesia (Federated States of)" = "Micronesia, Fed. Sts.",
+                          "Republic of Moldova" = "Moldova",
+                          "Republic of Korea" = "Korea, Rep.",
+                          "Lao People's Democratic Republic" = "Lao PDR",
+                          "Iran (Islamic Republic of)" = "Iran, Islamic Rep.",
+                          "Hong Kong, China" = "Hong Kong SAR, China",
+                          "Saint Kitts and Nevis" = "St. Kitts and Nevis",
+                          "Saint Vincent and the Grenadines" = "St. Vincent and the Grenadines",
+                          "Saint Lucia" = "St. Lucia",
+                          "Slovakia" = "Slovak Republic",
+                          "Yemen" = "Yemen, Rep.",
+                          "United States Virgin Islands" = "Virgin Islands (U.S.)"))
+```
+
+```{r}
+data_GenderEquality_tidy <- data_GenderEquality %>%
+  select(flagCode, country, GenderEquality_GlobalEqualityScore_score_2024) %>%
+  mutate(country = recode(country,
+                          "DR Congo" = "Congo, Dem. Rep.",
+                          "Republic of the Congo" = "Congo, Rep.",
+                          "Egypt" = "Egypt, Arab Rep.",
+                          "Gambia" = "Gambia, The",
+                          "Syria" = "Syrian Arab Republic",
+                          "Palestine" = "West Bank and Gaza",
+                          "Ivory Coast" = "Cote d'Ivoire",
+                          "Kyrgyzstan" = "Kyrgyz Republic",
+                          "Cape Verde" = "Cabo Verde",
+                          "Laos" = "Lao PDR",
+                          "Iran" = "Iran, Islamic Rep.",
+                          "Bahamas" = "Bahamas, The",
+                          "Brunei" = "Brunei Darussalam",
+                          "South Korea" = "Korea, Rep.",
+                          "Vietnam" = "Viet Nam",
+                          "Saint Kitts and Nevis" = "St. Kitts and Nevis",
+                          "Sint Maarten" = "Sint Maarten (Dutch part)",
+                          "Turkey" = "Turkiye",
+                          "Czech Republic" = "Czechia",
+                          "Macau" = "Macao SAR, China",
+                          "Russia" = "Russian Federation",
+                          "Hong Kong" = "Hong Kong SAR, China",
+                          "Slovakia" = "Slovak Republic",
+                          "United States Virgin Islands" = "Virgin Islands (U.S.)",
+                          "Saint Vincent and the Grenadines" = "St. Vincent and the Grenadines",
+                          "Saint Lucia" = "St. Lucia",
+                          "Micronesia" = "Micronesia, Fed. Sts.",
+                          "North Korea" = "Korea, Dem. People's Rep.",
+                          "Venezuela" = "Venezuela, RB",
+                          "Yemen" = "Yemen, Rep.",
+                          "Saint Martin" = "St. Martin (French part)"))
+```
+
+```{r}
+data_MaternityLeave_tidy <- data_MaternityLeave %>%
+  select(country, MaternityLeave_LengthInWeeks_numOfWeeks_YearFree) %>%
+  rename(Maternity.Leave = MaternityLeave_LengthInWeeks_numOfWeeks_YearFree) %>%
+  mutate(country = recode(country,
+                          "DR Congo" = "Congo, Dem. Rep.",
+                          "Republic of the Congo" = "Congo, Rep.",
+                          "Egypt" = "Egypt, Arab Rep.",
+                          "Gambia" = "Gambia, The",
+                          "Syria" = "Syrian Arab Republic",
+                          "Palestine" = "West Bank and Gaza",
+                          "Ivory Coast" = "Cote d'Ivoire",
+                          "Kyrgyzstan" = "Kyrgyz Republic",
+                          "Cape Verde" = "Cabo Verde",
+                          "Laos" = "Lao PDR",
+                          "Iran" = "Iran, Islamic Rep.",
+                          "Bahamas" = "Bahamas, The",
+                          "Brunei" = "Brunei Darussalam",
+                          "South Korea" = "Korea, Rep.",
+                          "Vietnam" = "Viet Nam",
+                          "Saint Kitts and Nevis" = "St. Kitts and Nevis",
+                          "Sint Maarten" = "Sint Maarten (Dutch part)",
+                          "Turkey" = "Turkiye",
+                          "Czech Republic" = "Czechia",
+                          "Macau" = "Macao SAR, China",
+                          "Russia" = "Russian Federation",
+                          "Hong Kong" = "Hong Kong SAR, China",
+                          "Slovakia" = "Slovak Republic",
+                          "United States Virgin Islands" = "Virgin Islands (U.S.)",
+                          "Saint Vincent and the Grenadines" = "St. Vincent and the Grenadines",
+                          "Saint Lucia" = "St. Lucia",
+                          "Micronesia" = "Micronesia, Fed. Sts.",
+                          "North Korea" = "Korea, Dem. People's Rep.",
+                          "Venezuela" = "Venezuela, RB",
+                          "Yemen" = "Yemen, Rep.",
+                          "Saint Martin" = "St. Martin (French part)")) %>%
+  mutate(Maternity.Leave.Days = Maternity.Leave * 7) %>%
+  select(-Maternity.Leave)
+```
+
+```{r}
+data_PaternityLeave_tidy <- data_PaternityLeave %>%
+  select(country, PaternityLeave_DaysOfPaternityLeave_num_YearFree) %>%
+  rename(Paternity.Leave.Days = PaternityLeave_DaysOfPaternityLeave_num_YearFree) %>%
+  mutate(country = recode(country,
+                          "DR Congo" = "Congo, Dem. Rep.",
+                          "Republic of the Congo" = "Congo, Rep.",
+                          "Egypt" = "Egypt, Arab Rep.",
+                          "Gambia" = "Gambia, The",
+                          "Syria" = "Syrian Arab Republic",
+                          "Palestine" = "West Bank and Gaza",
+                          "Ivory Coast" = "Cote d'Ivoire",
+                          "Kyrgyzstan" = "Kyrgyz Republic",
+                          "Cape Verde" = "Cabo Verde",
+                          "Laos" = "Lao PDR",
+                          "Iran" = "Iran, Islamic Rep.",
+                          "Bahamas" = "Bahamas, The",
+                          "Brunei" = "Brunei Darussalam",
+                          "South Korea" = "Korea, Rep.",
+                          "Vietnam" = "Viet Nam",
+                          "Saint Kitts and Nevis" = "St. Kitts and Nevis",
+                          "Sint Maarten" = "Sint Maarten (Dutch part)",
+                          "Turkey" = "Turkiye",
+                          "Czech Republic" = "Czechia",
+                          "Macau" = "Macao SAR, China",
+                          "Russia" = "Russian Federation",
+                          "Hong Kong" = "Hong Kong SAR, China",
+                          "Slovakia" = "Slovak Republic",
+                          "United States Virgin Islands" = "Virgin Islands (U.S.)",
+                          "Saint Vincent and the Grenadines" = "St. Vincent and the Grenadines",
+                          "Saint Lucia" = "St. Lucia",
+                          "Micronesia" = "Micronesia, Fed. Sts.",
+                          "North Korea" = "Korea, Dem. People's Rep.",
+                          "Venezuela" = "Venezuela, RB",
+                          "Yemen" = "Yemen, Rep.",
+                          "Saint Martin" = "St. Martin (French part)"))
+```
+
+```{r}
+data_AttitudesonGenderRoles_tidy <- data_AttitudesonGenderRoles %>%
+  select(Country, Gender, Gender_ideology_Men_should_prioritize, Gender_ideology_Women_should_prioritize) %>%
+  group_by(Country, Gender) %>%
+  summarise(Men.Role = mean(Gender_ideology_Men_should_prioritize, na.rm=TRUE),
+            Women.Role = mean(Gender_ideology_Women_should_prioritize, na.rm=TRUE),
+            count = n()) %>%
+  filter(count >= 5) %>%
+  group_by(Country) %>%
+  summarise(Men.Role = mean(Men.Role, na.rm=TRUE),
+            Women.Role = mean(Women.Role, na.rm=TRUE)) %>%
+  mutate(Women.More.Home = Men.Role - Women.Role) # more positive greater belief that women should stay home
+```
+Nevermind, this doesn't even have Singapore...
+
+```{r}
+data_ExpenditureonFamily_tidy <- data_ExpenditureonFamily %>%
+  filter(REF_AREA != "OECD",
+         TIME_PERIOD >= 2020) %>%
+  group_by(REF_AREA) %>%
+  summarise(Expeniture.on.Family = mean(OBS_VALUE)) %>% 
+  left_join(data_Population_tidy %>% select(Country.Name, Country.Code),
+            by = c("REF_AREA" = "Country.Code")) %>%
+  drop_na()
+
+data_ExpenditureonIncapacity_tidy <- data_ExpenditureonIncapacity %>%
+  filter(REF_AREA != "OECD",
+         TIME_PERIOD >= 2020) %>%
+  group_by(REF_AREA) %>%
+  summarise(Expeniture.on.Incapacity = mean(OBS_VALUE)) %>% 
+  left_join(data_Population_tidy %>% select(Country.Name, Country.Code),
+            by = c("REF_AREA" = "Country.Code")) %>%
+  drop_na()
+
+data_SocialExpenditure_tidy <- data_ExpenditureonFamily_tidy %>%
+  left_join(data_ExpenditureonIncapacity_tidy %>% select(-Country.Name), by = c("REF_AREA")) %>%
+  rename(Country.Code = REF_AREA) %>%
+  mutate(Expeniture.on.Incapacity = replace_na(Expeniture.on.Incapacity, 0),
+         Expeniture.on.Family = replace_na(Expeniture.on.Family, 0)) %>%
+  mutate(Social.Expenditure = Expeniture.on.Incapacity + Expeniture.on.Family) %>%
+  select(-Expeniture.on.Family, -Expeniture.on.Incapacity)
+```
+
+Only 42 countries are represented in these datasets (second one only 38 after removing NAs and those without any readings since 2020). Actually, let's completely give up on these tables. Because we have the welfare coverage. And expenditure on family may actually be more related to how important family is, and if the society is a traditional gender roles kind of family then it will mess up the measures.
+
+## Join data
+
+We want to choose the countries with which we can predict the effect of different policies on Singapore. Hence, we try to identify factors which affect the effect of possible policies to boost Female LFPR.\
+\
+Policies would broadly be either financial (increasing the returns for females to work, decreasing the opportunity cost of hiring females) or non-financial (decreasing the opportunity cost for females to work, increasing the opportunity cost of not hiring females). Below, I will list out the data we are using and how it is relevant to these factors.
+
+### Summary of data we are going to use
+
+**Demographic:**
+
+* `Female.LFPR`: which signals a starting point. This can suggest how accepted female employment is at large (if wanna go quirky, we can do quick LMs and see which are the most correlated?). 
+* `Population`: Countries with large and small popualtions engage in different kinds of policies and face different bureaucratic burdens.
+* `Fertility.Rate`: Singapore is struggling with its ageing population. Policies which target female LFPR must work in the context of the ageing workforce.
+* `Tertiary.Education`: suggests the kinds of jobs that are available to potential female workers, which may then affect the policies that are suited for boosting employment in those sectors.
+
+**Economic:**
+
+* `GDP.PC`: Generally, female LFPR does depend on income level of a country. In very low income countries, female LFPR is high due to females working being necessary. Hence, female LFPR is unlikely to be increased through policy. In middle income countries, stigma around married women working is particularly high, as it signals the inaptitude of the man to make an adequate living.
+* `Unemployment`: economic capacity for more women to enter the workforce.
+
+**Cultural:**
+
+* `Welfare.Coverage`: Whether people are used to welfare policies and a generally interventionist government.
+* `Maternity.Leave.Total.W`: suggests the degree of family care expected of female workers, but also 
+* `Gender.Equality`: generally, higher gender equality means greater respect for women's rights and abilities (not always, but usually). Hence, it should come with an increased accpetance for female employment.
+
+### Code
+
+```{r}
+income_group <- read.csv("../data/metadata/Population/Metadata_Country_API_SP.POP.TOTL_DS2_en_csv_v2_2590.csv") %>%
+  select(Country.Code, Region, IncomeGroup)
+```
+
+```{r}
+full_data <- data_FemaleLFPR_tidy %>%
+  full_join(data_Population_tidy %>% select(-Country.Code), by = c("Country.Name")) %>%
+  full_join(data_FertilityRate_tidy %>% select(-Country.Code), by = c("Country.Name")) %>%
+  full_join(data_TertiaryEducation_tiday %>% select(-Country.Code), by = c("Country.Name")) %>%
+  full_join(data_GDPPerCapita_tidy %>% select(-Country.Code), by = c("Country.Name")) %>%
+  left_join(income_group, by = c("Country.Code")) %>%
+  mutate(IncomeGroup = factor(IncomeGroup,
+                              levels = c("Low income", "Lower middle income",
+                                         "Upper middle income", "High income"),
+                              labels = c(1, 2, 3, 4),
+                              ordered = TRUE)) %>%
+  mutate(IncomeGroup = as.numeric(IncomeGroup)) %>%
+  # full_join(data_Sectors_tidy %>% select(-Country.Code), by = c("Country.Name")) %>%
+  # select(-Agri, -Manu, -Indus, -Sector.Similarity) %>%
+  full_join(data_Unemployment_tidy %>% select(-Country.Code), by = c("Country.Name")) %>%
+  full_join(data_ServicesEmployment_tidy  %>% select(-Country.Code), by = c("Country.Name")) %>%
+  full_join(data_WelfareCoverage_tidy, by = c("Country.Name" = "country")) %>%
+  full_join(data_MaternityLeave_tidy, by = c("Country.Name" = "country")) %>%
+  full_join(data_PaternityLeave_tidy, by = c("Country.Name" = "country")) %>%
+  replace_na(list(Maternity.Leave.Days = 0,
+                  Paternity.Leave.Days = 0)) %>%
+  mutate(Maternity.Paternity.Leave.Diff = Maternity.Leave.Days - Paternity.Leave.Days) %>%
+  select(-Maternity.Leave.Days, -Paternity.Leave.Days) %>%
+  full_join(data_GenderEquality_tidy %>% select(-flagCode), by = c("Country.Name" = "country")) %>%
+  rename(Gender.Equality = GenderEquality_GlobalEqualityScore_score_2024) %>%
+  relocate(Country.Code, .after = Country.Name) %>%
+  relocate(Region, .after = Country.Code) %>%
+  mutate(across(Female.LFPR:Gender.Equality, scale))
+```
+
+### Correlation plot
+
+```{r}
+head(full_data)
+```
+
+```{r}
+cormat <- round(cor(full_data %>%
+                      select(Female.LFPR:Gender.Equality, -IncomeGroup) %>%
+                      drop_na()), 2)
+melted_cormat_full <- melt(cormat)
+```
+
+```{r}
+get_lower_tri<-function(cormat) {
+    cormat[upper.tri(cormat)] <- NA
+    return(cormat)
+}
+
+get_upper_tri <- function(cormat) {
+    cormat[lower.tri(cormat)]<- NA
+    return(cormat)
+}
+
+upper_tri <- get_upper_tri(cormat)
+```
+
+```{r}
+melted_cormat <- melt(upper_tri, na.rm = TRUE)
+
+ggplot(data = melted_cormat, aes(Var2, Var1, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "dodgerblue", high = "tomato", mid = "white", 
+                       midpoint = 0, limit = c(-1,1), space = "Lab", 
+                       name="Pearson\nCorrelation") +
+  geom_text(aes(Var2, Var1, label = value), color = "black", size = 2.5) +
+  labs(title = "Correlation between variables") +
+  theme_minimal() + 
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1, size = 10, colour = "black"),
+        axis.text.y = element_text(size = 10, colour = "black"),
+        panel.grid.major = element_blank(),
+        panel.border = element_blank(),
+        panel.background = element_blank(),
+        legend.position = c(.55, .95),
+        legend.justification = c("right", "top"),
+        legend.direction = "horizontal") +
+        guides(fill = guide_colorbar(barwidth = 6, barheight = 1,
+                                     title.position = "top", title.hjust = 0.5)) +
+  
+  coord_fixed()
+```
+
+```{r}
+par(mfrow=c(3, 3))
+
+pivoted_table <- full_data %>%
+  select(-IncomeGroup) %>%
+  pivot_longer(Population:Gender.Equality, names_to = "Measure", values_to = "x")
+
+ggplot(pivoted_table, aes(x = x, y = Female.LFPR)) + 
+  geom_point(aes(colour = Region), size = 0.5, alpha = 0.7) + 
+  geom_text_repel(aes(label = Country.Code), colour = "black", size=2) + 
+  facet_wrap(~Measure) +
+  theme_minimal() +
+  theme(plot.background = element_rect(colour = "black", linewidth = 1)) +
+  scale_color_brewer(palette = "Set1")
+```
+
+## Trying to calculate the distance
+
+### Using all the data
+
+```{R}
+cov_mat <- var(full_data %>% select(-Country.Name, -Country.Code, -Region, -IncomeGroup)  %>% drop_na(), na.rm=TRUE)
+data_mat <- data.matrix(full_data %>% select(-Country.Name, -Country.Code, -Region, -IncomeGroup)  %>% drop_na())
+centre <- data.matrix(
+  full_data  %>% select(-IncomeGroup) %>% drop_na() %>%
+    filter(Country.Name == "Singapore") %>%
+    select(-Country.Name, -Country.Code, -Region)
+  )
+```
+
+```{r}
+m_distances <- mahalanobis(data_mat, centre, cov_mat, FALSE)
+eucl_distances <- dist(data_mat)[(full_data %>% select(-IncomeGroup) %>% drop_na())$Country.Name=="Singapore"]
+```
+
+```{r}
+m_distances
+```
+
+```{r}
+full_data_with_d <- cbind(full_data %>% drop_na(), m_distances)
+```
+
+```{r}
+ggplot(full_data_with_d %>% arrange(m_distances), aes(y = reorder(Country.Name, -m_distances, sum))) +
+  geom_hline(yintercept = "Netherlands", lty = 2, alpha = 0.8) +
+  geom_point(aes(x = scale(m_distances)), color = "deepskyblue") +
+  labs(title = "Mahalanobis Similarity to Singapore",
+         x = "Mahalanobis distance", y = "Country") +
+  theme_minimal()
+```
+
+```{r}
+ggplot(full_data_with_d %>% slice_min(m_distances, n = 20), aes(x = m_distances)) +
+  geom_hline(yintercept = "Netherlands", lty = 2, alpha = 0.8) +
+  geom_point(aes(y = reorder(Country.Name, -m_distances, sum)), color = "dodgerblue", size = 2) +
+  labs(title = "Similarity to Singapore (Top 20)",
+       subtitle = "Mahalanobis distance from Singapore",
+       x = "Mahalanobis distance", y = "Country") +
+  theme_minimal() + 
+  theme()
+```
+
+```{r}
+create_mdist_df <- function(df) {
+  cov_mat <- var(df  %>% drop_na() %>% select(-Country.Name, -Country.Code, -Region), na.rm=TRUE)
+  data_mat <- data.matrix(df %>% drop_na() %>% select(-Country.Name, -Country.Code, -Region))
+  centre <- data.matrix(
+    df  %>% drop_na() %>%
+      filter(Country.Name == "Singapore") %>%
+      select(-Country.Name, -Country.Code, -Region)
+  )
+  m_dist <- mahalanobis(data_mat, centre, cov_mat, FALSE)
+  return (cbind(df %>% drop_na(), m_dist))
+}
+
+plot_mdist_data <- function(df_with_mdist, cutoff) {
+  ggplot(df_with_mdist, aes(y = reorder(Country.Name, -m_dist, sum))) +
+    geom_hline(yintercept = cutoff, lty = 2, alpha = 0.8) +
+    geom_point(aes(x = scale(m_dist)), color = "dodgerblue", size = 2) +
+    labs(title = "Mahalanobis Similarity to Singapore",
+           x = "Mahalanobis distance", y = "Country") +
+    theme_minimal()
+}
+
+plot_mdist_data_top_20 <- function(df_with_mdist, cutoff) {
+  ggplot(df_with_mdist %>% slice_min(m_dist, n = 20), aes(y = reorder(Country.Name, -m_dist, sum))) +
+    geom_hline(yintercept = cutoff, lty = 2, alpha = 0.8) +
+    geom_point(aes(x = scale(m_dist)), color = "dodgerblue", size = 2) +
+    labs(title = "Similarity to Singapore (Top 20)",
+         subtitle = "Mahalanobis distance from Singapore",
+         x = "Mahalanobis distance", y = "Country") +
+    theme_minimal()
+}
+
+plot_mdist_data_last_20 <- function(df_with_mdist, cutoff) {
+  ggplot(df_with_mdist %>% slice_max(m_dist, n = 20), aes(y = reorder(Country.Name, -m_dist, sum))) +
+    geom_hline(yintercept = cutoff, lty = 2, alpha = 0.8) +
+    geom_point(aes(x = scale(m_dist)), color = "dodgerblue", size = 2) +
+    labs(title = "Similarity to Singapore (Bottom 20)",
+         subtitle = "Mahalanobis distance from Singapore",
+         x = "Mahalanobis distance", y = "Country") +
+    theme_minimal()
+}
+```
+
+### Selective variables (all countries)
+
+```{r}
+df_2 <- full_data %>%
+  select(Country.Name, Country.Code, Region,
+         Female.LFPR, 
+         Fertility.Rate, Tertiary.Education,
+         GDP.PC, Unemployment, Services.Employment,
+         Gender.Equality) %>%
+  drop_na()
+df_2_mdist <- create_mdist_df(df_2)
+plot_mdist_data(df_2_mdist, "United Arab Emirates")
+plot_mdist_data_top_20(df_2_mdist, "United Arab Emirates")
+plot_mdist_data_last_20(df_2_mdist, "United Arab Emirates")
+```
+
+```{r}
+ggplot(full_data %>%
+         mutate(Gender.Equality = Gender.Equality * sd(data_GenderEquality_tidy %>% pull(GenderEquality_GlobalEqualityScore_score_2024)) + mean(data_GenderEquality_tidy %>% pull(GenderEquality_GlobalEqualityScore_score_2024))) %>% drop_na(),
+       aes(x = GDP.PC, y = Female.LFPR,
+           colour = Gender.Equality)) + 
+  geom_point(size=2, alpha = 0.8) + 
+  scale_color_gradient2(low="black", mid="deepskyblue", high="skyblue", midpoint=0.75,
+                        name="Gender Equality Index", space = "Lab") +
+  geom_smooth(colour="tomato2", se=FALSE, method="loess", formula = 'y ~ x') +
+  geom_text_repel(aes(label = Country.Code), colour = "black", size=2, max.overlaps = 20) + 
+  labs(title="Relationship Between Female Labour Force Participation Rate and GDP per Capita",
+       subtitle="and state of gender equality",
+       x="GDP per Capita", y="FLFP Rate") +
+  theme_minimal() +
+  theme(axis.text = element_blank(),
+        legend.position = c(.9, .3),
+        legend.justification = c("right", "top"),
+        legend.direction = "horizontal") +
+        guides(colour = guide_colorbar(barwidth = 10, barheight = 1,
+                                     title.position = "top", title.hjust = 0.5))
+```
+
+### Only Asia
+
+```{r}
+df_3 <- full_data %>%
+  filter(Region == "East Asia & Pacific") %>%
+  select(-IncomeGroup) %>%
+  drop_na()
+df_3_mdist <- create_mdist_df(df_3)
+plot_mdist_data(df_3_mdist, "Japan")
+plot_mdist_data_top_20(df_3_mdist, "Japan")
+plot_mdist_data_last_20(df_3_mdist, "Japan")
+```
+
+### Only Asia with selective variables
+
+```{r}
+df_4 <- full_data %>%
+  filter(Region == "East Asia & Pacific") %>%
+  select(Country.Name, Country.Code, Region,
+         Female.LFPR, 
+         Fertility.Rate, Tertiary.Education,
+         GDP.PC, Unemployment, Services.Employment,
+         Gender.Equality) %>%
+  drop_na()
+df_4_mdist <- create_mdist_df(df_4)
+plot_mdist_data(df_4_mdist, "Malaysia")
+plot_mdist_data_top_20(df_4_mdist, "Malaysia")
+```
+
+```{r}
+chosen_1 <- c("Ireland", "Switzerland", "Brunei Darussalam", "Austria", "Denmark", "United States", "Netherlands")
+chosen_2 <- c("Ireland", "Qatar", "Switzerland", "United States", "Brunei Darussalam", "United Arab Emirates")
+chosen_3 <- c("Indonesia", "Australia", "Viet Nam", "Lao PDR", "Thailand", "Japan")
+chosen_4 <- c("Australia", "Korea, Rep.", "Thailand", "Indonesia", "Indonesia", "Viet Nam", "Brunei Darussalam", "Lao PDR", "Japan", "Malaysia")
+chosen_combined <- unique(c(chosen_1, chosen_2, chosen_3, chosen_4))
+```
+
+```{r}
+full_data %>% filter(Country.Name == "Singapore")
+```
+
+## Driving factors of similarity
+
+```{r}
+data_chosen_countries <- full_data_with_d %>%
+  arrange(m_distances) %>%
+  select(-IncomeGroup, -Country.Code, -Region) %>%
+  mutate(Female.LFPR = abs(Female.LFPR - 0.7542501),
+         Population = abs(Population + 0.2189579),
+         Fertility.Rate = abs(Fertility.Rate + 1.166541),
+         Tertiary.Education = abs(Tertiary.Education - 1.235351),
+         GDP.PC = abs(GDP.PC - 3.825699),
+         Unemployment = abs(Unemployment + 0.6693725),
+         Services.Employment = abs(Services.Employment - 1.54907),
+         Welfare.Coverage = abs(Welfare.Coverage - 1.388958),
+         Maternity.Paternity.Leave.Diff = abs(Maternity.Paternity.Leave.Diff - 0.5738964),
+         Gender.Equality = abs(Gender.Equality - 0.4557436)) %>%
+  pivot_longer(Female.LFPR:Gender.Equality, names_to = "Variable", values_to = "Value")
+
+## Global expanded
+
+ggplot(data_chosen_countries %>% 
+         filter(Country.Name %in% chosen_1 | Country.Name %in% (full_data_with_d %>% slice_max(m_distances, n = 20) %>% pull(Country.Name))),
+       aes(x = factor(Country.Name, full_data_with_d %>% 
+                        arrange(m_distances) %>% 
+                        pull(Country.Name)), 
+           y = Variable)) +
+  geom_tile(aes(fill=Value), color = "white") +
+  scale_fill_gradient2(low="tomato", mid = "white", high="white", midpoint = 4.75,
+                       name = "Difference \n(scaled)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust=1)) +
+  geom_text(aes(label = round(Value, 2)), color = "black", size = 2.5) +
+  labs(title = "Difference Between Countries and Singapore (Global)",
+       subtitle = "on each variable from expanded list",
+       x = "Country", y = "Variable") +
+  coord_fixed()
+
+ggplot(data_chosen_countries %>%
+         filter(Country.Name %in% c(chosen_1)),
+       aes(x = factor(Country.Name, chosen_1), y = Variable)) +
+  geom_tile(aes(fill=Value), color = "white") +
+  scale_fill_gradient2(low="tomato", mid = "white", high="white", midpoint = 4,
+                       name = "Difference \n(scaled)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(aes(label = round(Value, 2)), color = "black", size = 2.5) +
+  labs(title = "Difference Between Selected \nCountries and Singapore (Global)",
+       subtitle = "on each variable from expanded list",
+       x = "Country", y = "Variable") +
+  coord_fixed()
+
+ggplot(data_chosen_countries %>%
+         filter(Country.Name %in% (full_data_with_d %>% slice_max(m_distances, n = 20) %>% pull(Country.Name))),
+       aes(x = factor(Country.Name, (full_data_with_d %>% slice_max(m_distances, n = 20) %>% pull(Country.Name))), y = Variable)) +
+  geom_tile(aes(fill=Value), color = "white") +
+  scale_fill_gradient2(low="tomato", mid = "white", high="white", midpoint = 4.75,
+                       name = "Difference \n(scaled)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(aes(label = round(Value, 2)), color = "black", size = 2.5) +
+  labs(title = "Difference Between Furthest Countries and Singapore (Global)",
+       subtitle = "on each variable from expanded list",
+       x = "Country", y = "Variable") +
+  coord_fixed()
+
+## Global selected
+
+ggplot(data_chosen_countries %>%
+         filter(Country.Name %in% c(chosen_2)) %>%
+         mutate(Value = replace(Value, Variable %in% c("Population", "Welfare.Coverage", "Maternity.Paternity.Leave.Diff"), Inf)),
+       aes(x = factor(Country.Name, chosen_2), y = Variable)) +
+  geom_tile(aes(fill=Value), color = "white") +
+  scale_fill_gradient2(low="tomato", mid = "white", high="white", midpoint = 4,
+                       name = "Difference \n(scaled)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(aes(label = round(Value, 2)), color = "black", size = 2.5) +
+  labs(title = "Difference to Singapore",
+       x = "Country") +
+  coord_fixed()
+
+ggplot(data_chosen_countries %>%
+         filter(Country.Name %in% (df_2_mdist %>% slice_max(m_dist, n = 15) %>% pull(Country.Name))) %>%
+         mutate(Value = replace(Value, Variable %in% c("Population", "Welfare.Coverage", "Maternity.Paternity.Leave.Diff"), Inf)),
+       aes(x = factor(Country.Name, (df_2_mdist %>% slice_max(m_dist, n = 20) %>% pull(Country.Name))), y = Variable)) +
+  geom_tile(aes(fill=Value), color = "white") +
+  scale_fill_gradient2(low="tomato", mid = "white", high="white", midpoint = 4,
+                       name = "Difference \n(scaled)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(aes(label = round(Value, 2)), color = "black", size = 2.5) +
+  labs(title = "Difference to Singapore",
+       x = "Country", y = "Variable") +
+  coord_fixed()
+
+## Regional expanded
+
+ggplot(data_chosen_countries %>% 
+         filter(Country.Name %in% (df_3_mdist %>% pull(Country.Name))),
+       aes(x = factor(Country.Name, df_3_mdist %>% 
+                        arrange(m_dist) %>% 
+                        pull(Country.Name)), 
+           y = Variable)) +
+  geom_tile(aes(fill=Value), color = "white") +
+  scale_fill_gradient2(low="tomato", mid = "white", high="white", midpoint = 4.75,
+                       name = "Difference \n(scaled)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust=1)) +
+  geom_text(aes(label = round(Value, 2)), color = "black", size = 2.5) +
+  labs(title = "Difference Between Countries and Singapore (Regional)",
+       subtitle = "on each variable from expanded list",
+       x = "Country", y = "Variable") +
+  coord_fixed()
+
+ggplot(data_chosen_countries %>%
+         filter(Country.Name %in% c(chosen_3)), 
+       aes(x = factor(Country.Name, chosen_3), y = Variable)) +
+  geom_tile(aes(fill=Value), color = "white") +
+  scale_fill_gradient2(low="tomato", mid = "white", high="white", midpoint = 4,
+                       name = "Difference \n(scaled)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(aes(label = round(Value, 2)), color = "black", size = 2.5) +
+  labs(title = "Difference Between Selected\n Countries and Singapore (Regional)",
+       subtitle = "on each variable from expanded list",
+       x = "Country") +
+  coord_fixed()
+
+ggplot(data_chosen_countries %>%
+         filter(Country.Name %in% (df_3_mdist %>% slice_max(m_dist, n = 10) %>% pull(Country.Name))),
+       aes(x = factor(Country.Name, (df_3_mdist %>% slice_max(m_dist, n = 10) %>% pull(Country.Name))), y = Variable)) +
+  geom_tile(aes(fill=Value), color = "white") +
+  scale_fill_gradient2(low="tomato", mid = "white", high="white", midpoint = 4,
+                       name = "Difference \n(scaled)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(aes(label = round(Value, 2)), color = "black", size = 2.5) +
+  labs(title = "Difference Between Furthest Countries and Singapore (Regional)",
+       subtitle = "on each variable from expanded list",
+       x = "Country", y = "Variable") +
+  coord_fixed()
+
+## Regional selected
+
+ggplot(data_chosen_countries %>%
+         filter(Country.Name %in% (df_4_mdist %>% slice_min(m_dist, n = 5) %>% pull(Country.Name))) %>%
+         mutate(Value = replace(Value, Variable %in% c("Population", "Welfare.Coverage", "Maternity.Paternity.Leave.Diff"), Inf)),
+       aes(x = factor(Country.Name, df_4_mdist %>% slice_min(m_dist, n = 5) %>% pull(Country.Name)),
+           y = Variable)) +
+  geom_tile(aes(fill=Value), color = "white") +
+  scale_fill_gradient2(low="tomato", mid = "white", high="white", midpoint = 4,
+                       name = "Difference \n(scaled)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(aes(label = round(Value, 2)), color = "black", size = 2.5) +
+  labs(title = "Difference Between Regional \nComparators and Singapore",
+       subtitle = "on each variable",
+       x = "Country") +
+  coord_fixed()
+
+ggplot(data_chosen_countries %>%
+         filter(Country.Name %in% (df_4_mdist %>% slice_max(m_dist, n = 10) %>% pull(Country.Name))) %>%
+         mutate(Value = replace(Value, Variable %in% c("Population", "Welfare.Coverage", "Maternity.Paternity.Leave.Diff"), Inf)),
+       aes(x = factor(Country.Name, (df_4_mdist %>% slice_max(m_dist, n = 10) %>% pull(Country.Name))),
+           y = Variable)) +
+  geom_tile(aes(fill=Value), color = "white") +
+  scale_fill_gradient2(low="tomato", mid = "white", high="white", midpoint = 3,
+                       name = "Difference \n(scaled)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  geom_text(aes(label = round(Value, 2)), color = "black", size = 2.5) +
+  labs(title = "Difference to Singapore",
+       x = "Country", y = "Variable") +
+  coord_fixed()
+```
+
+
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
