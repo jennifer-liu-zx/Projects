@@ -25,7 +25,7 @@
 
 ### Boosting Female Labour Force Participation in Singapore
 - Competition: MOM-NTU Economics Essay Competition 2025
-- Directory: `Female Labour Force Pariticipation`
+- Directory: `Female-Labour-Force-Pariticipation`
 - Language: R
 - Featured: similarity analysis, policy analysis and design
 
