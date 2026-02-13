@@ -1,0 +1,391 @@
+year,industry1,industry2,industry3,at_least_one,parttime_work,flexihours,staggered_hours,teleworking,homeworking,job_sharing,compressed_work_week
+2011,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",29.8,20.7,5.9,5.9,-,-,-,na
+2011,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,22.8,13.3,7.1,2.1,2.1,-,-,na
+2011,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",31.9,12.3,16,11.7,4.9,1.2,2.5,na
+2011,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,27.6,20.3,6.8,1.5,2.5,0.7,1.2,na
+2011,manufacturing,electronic and computer products,electronic and computer products,27.3,14,8.4,11.2,2.8,0.7,-,na
+2011,manufacturing,transport equipment,transport equipment,31,23.7,9.3,2.4,2.9,1.3,0.3,na
+2011,manufacturing,other manufacturing industries,other manufacturing industries,37.7,28.9,5.6,7.4,0.4,1.8,0.4,na
+2011,construction,construction,construction,24.4,17.8,6.2,4.3,0.6,0.7,0.2,na
+2011,services,wholesale and retail trade,wholesale trade,33.1,23.5,6.9,4.6,4.8,0.8,1.2,na
+2011,services,wholesale and retail trade,retail trade,55.2,47,5.8,7.7,2.2,-,0.3,na
+2011,services,transportation and storage,land transport and supporting services,34.9,27.4,3.4,5.5,-,-,6.8,na
+2011,services,transportation and storage,water transport and supporting services,29.4,21.9,5.9,8,3.2,-,-,na
+2011,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,na
+2011,services,transportation and storage,other transport and storage services,24.6,18,3.1,9.6,2.2,3.1,0.9,na
+2011,services,accommodation and food services,accommodation,36.3,24.2,1.1,13.2,-,-,-,na
+2011,services,accommodation and food services,food and beverage services,61,58.2,3.8,1.8,0.6,-,-,na
+2011,services,information and communications,"telecommunications, broadcasting and publishing",56.3,34.8,17,18.8,9.8,5.4,-,na
+2011,services,information and communications,it and other information services,40.9,22.1,13.3,16.6,20.4,-,0.6,na
+2011,services,financial and insurance services,financial services,52,41.4,14.2,23.2,7.3,2,5.3,na
+2011,services,financial and insurance services,insurance services,60.3,26.5,13.2,39.7,13.2,-,-,na
+2011,services,real estate services,real estate services,47.6,35.8,8.5,7.5,0.9,2.4,-,na
+2011,services,professional services,"legal, accounting and management services",43.1,30,17.8,8.7,5,-,-,na
+2011,services,professional services,architectural and engineering services,29.3,24,8.5,6,2.5,-,-,na
+2011,services,professional services,other professional services,65,41.3,18.2,21.7,13.3,-,1.4,na
+2011,services,administrative and support services,security and investigation,45.3,38,8,6.6,2.9,3.6,0.7,na
+2011,services,administrative and support services,cleaning and landscaping,49,42.4,3.1,3.1,2,-,-,na
+2011,services,administrative and support services,other administrative and support services,44.8,26.8,8.7,16.1,1.6,2.3,-,na
+2011,services,"community, social and personal services",education,76.8,73.5,8.6,16.6,1.3,-,1.3,na
+2011,services,"community, social and personal services",health and social services,71.7,68.8,7.8,22,0.5,-,1,na
+2011,services,"community, social and personal services","other community, social and personal services",48,40.3,8.4,9.9,6,1.1,-,na
+2012,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",44.3,34.8,7,4.5,0.5,2.5,2.5,na
+2012,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,29.6,18.9,5.6,3.4,7.7,-,-,na
+2012,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",28.5,13.3,14.6,7.6,3.2,3.2,1.3,na
+2012,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,30.6,22.8,5.5,4.8,2.2,-,-,na
+2012,manufacturing,electronic and computer products,electronic and computer products,27.7,12.8,10.6,12.1,2.8,-,-,na
+2012,manufacturing,transport equipment,transport equipment,22.2,14.5,5.9,3.3,1.4,-,-,na
+2012,manufacturing,other manufacturing industries,other manufacturing industries,32.2,25.3,9.7,6.6,2.1,1.7,-,na
+2012,construction,construction,construction,24.4,18.2,6.8,3.3,3,0.2,0.4,na
+2012,services,wholesale and retail trade,wholesale trade,45.6,38.7,8.2,3.8,2.3,2.5,-,na
+2012,services,wholesale and retail trade,retail trade,60.4,57.5,7,7,4.1,1.3,1.3,na
+2012,services,transportation and storage,land transport and supporting services,34.2,26.2,0.7,10.7,-,-,-,na
+2012,services,transportation and storage,water transport and supporting services,36.8,24.4,1,7.8,8.3,-,0.5,na
+2012,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,na
+2012,services,transportation and storage,other transport and storage services,23.9,14.7,3.1,8.5,1.2,-,0.8,na
+2012,services,accommodation and food services,accommodation,38.2,29.2,4.5,4.5,3.4,-,1.1,na
+2012,services,accommodation and food services,food and beverage services,61.1,58.7,7.4,2.1,3.4,-,-,na
+2012,services,information and communications,"telecommunications, broadcasting and publishing",54.8,43.5,13,20.9,11.3,3.5,-,na
+2012,services,information and communications,it and other information services,38.2,18.4,17.1,7.4,12.9,0.5,0.5,na
+2012,services,financial and insurance services,financial services,61.9,46.2,19,26.6,10,2.1,6.3,na
+2012,services,financial and insurance services,insurance services,65.8,49.3,15.1,23.3,12.3,4.1,-,na
+2012,services,real estate services,real estate services,48,36.7,3.5,12.7,1.3,-,-,na
+2012,services,professional services,"legal, accounting and management services",47.5,36.3,12.3,11.5,2.2,1.4,-,na
+2012,services,professional services,architectural and engineering services,38.1,29.8,8.3,8.7,3.8,-,-,na
+2012,services,professional services,other professional services,54.1,34,14.5,17.6,1.3,-,-,na
+2012,services,administrative and support services,security and investigation,50.3,43.4,11.2,0.7,3.5,-,-,na
+2012,services,administrative and support services,cleaning and landscaping,52.8,49,2.1,1,3.5,-,-,na
+2012,services,administrative and support services,other administrative and support services,40.5,30.8,14.1,11.4,7.3,-,-,na
+2012,services,"community, social and personal services",education,84.7,71.8,13,24.3,4,0.6,0.6,na
+2012,services,"community, social and personal services",health and social services,78.6,70.2,13.5,21.9,3.3,0.9,-,na
+2012,services,"community, social and personal services","other community, social and personal services",54.4,49.4,6.6,8.5,6.4,1,1.4,na
+2013,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",62.5,51,9.1,17.4,4.3,2,-,na
+2013,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,40.3,14.7,15.2,7.8,6.5,-,-,na
+2013,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",44.4,21.6,15.7,24.2,7.2,-,0.7,na
+2013,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,29.3,24.4,4.2,1.7,1.7,0.9,-,na
+2013,manufacturing,electronic and computer products,electronic and computer products,42.1,22.9,16.4,9.3,7.9,-,-,na
+2013,manufacturing,transport equipment,transport equipment,31,20.8,7.9,5.1,3.8,-,1.1,na
+2013,manufacturing,other manufacturing industries,other manufacturing industries,28.8,24.3,3.8,6.5,0.3,3.4,-,na
+2013,construction,construction,construction,24,18.3,6,2.7,2.4,0.9,-,na
+2013,services,wholesale and retail trade,wholesale trade,45.6,34.3,7.4,9.6,5.4,2.3,0.2,na
+2013,services,wholesale and retail trade,retail trade,55.9,49,8.2,10.6,4.1,1.9,0.5,na
+2013,services,transportation and storage,land transport and supporting services,34.3,31.4,7,9.3,4.1,-,2.9,na
+2013,services,transportation and storage,water transport and supporting services,23.6,14.1,11.1,4.5,4.5,-,-,na
+2013,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,na
+2013,services,transportation and storage,other transport and storage services,27.8,17.4,3,10.7,3.3,-,-,na
+2013,services,accommodation and food services,accommodation,47.4,33,13.4,17.5,1,-,1,na
+2013,services,accommodation and food services,food and beverage services,72.2,66.7,13.5,7,5.8,0.6,-,na
+2013,services,information and communications,"telecommunications, broadcasting and publishing",54.2,40.7,19.5,16.9,17.8,-,-,na
+2013,services,information and communications,it and other information services,53.6,27.3,21.5,18.2,14.8,-,-,na
+2013,services,financial and insurance services,financial services,56.7,37.3,21.9,30.7,14.8,0.5,-,na
+2013,services,financial and insurance services,insurance services,58.1,43.2,9.5,27,12.2,2.7,-,na
+2013,services,real estate services,real estate services,48.2,40.7,3.5,11.9,2.2,-,-,na
+2013,services,professional services,"legal, accounting and management services",62.2,33.2,25,26.1,17.1,-,0.5,na
+2013,services,professional services,architectural and engineering services,40.6,26.2,17.3,7,2.6,-,-,na
+2013,services,professional services,other professional services,60.1,42.6,21.9,20.2,16.9,-,-,na
+2013,services,administrative and support services,security and investigation,38.5,33.3,6.7,2.2,0.7,-,-,na
+2013,services,administrative and support services,cleaning and landscaping,39.5,33.6,7.4,5.2,4.9,-,-,na
+2013,services,administrative and support services,other administrative and support services,53.7,38,13.9,21.3,6.6,-,-,na
+2013,services,"community, social and personal services",education,76.5,70.5,16.9,25.9,3,3,1.2,na
+2013,services,"community, social and personal services",health and social services,85.4,76.2,19.9,32,5.8,-,0.5,na
+2013,services,"community, social and personal services","other community, social and personal services",63.4,51.5,17.6,12.9,5.9,0.9,1.1,na
+2014,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",49.8,34.9,10.8,11.6,3.7,-,-,na
+2014,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,43.1,27.1,14.2,4.6,8.3,0.9,-,na
+2014,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",25.9,19.4,8.2,5.3,5.9,0.6,1.8,na
+2014,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,36.5,23.7,10.4,6.8,5.1,0.9,-,na
+2014,manufacturing,electronic and computer products,electronic and computer products,47.7,23.8,28.5,20,16.2,-,-,na
+2014,manufacturing,transport equipment,transport equipment,32.8,24.9,11.9,6.8,3.1,1.5,-,na
+2014,manufacturing,other manufacturing industries,other manufacturing industries,29,21.2,5.4,5.7,2.4,5.1,-,na
+2014,construction,construction,construction,30.8,22.6,8.5,4.1,3.5,0.6,-,na
+2014,services,wholesale and retail trade,wholesale trade,52.3,37.2,11.4,11.7,4,2.8,0.7,na
+2014,services,wholesale and retail trade,retail trade,64.9,55.7,5.4,9.4,3.2,-,-,na
+2014,services,transportation and storage,land transport and supporting services,41.8,37,6.8,10.3,6.2,-,-,na
+2014,services,transportation and storage,water transport and supporting services,32,19.4,10.2,8.3,0.5,-,-,na
+2014,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,na
+2014,services,transportation and storage,other transport and storage services,34.5,21.3,9.8,8.7,7.7,-,-,na
+2014,services,accommodation and food services,accommodation,71.2,54.8,16.3,18.3,1.9,-,-,na
+2014,services,accommodation and food services,food and beverage services,63.7,56.9,10.6,8.5,4.7,1.1,-,na
+2014,services,information and communications,"telecommunications, broadcasting and publishing",50.8,40,21.7,10,19.2,2.5,0.8,na
+2014,services,information and communications,it and other information services,39.4,17.1,15.7,11.1,19.9,-,0.9,na
+2014,services,financial and insurance services,financial services,59.5,41.9,16.2,31.2,16.2,0.5,2.7,na
+2014,services,financial and insurance services,insurance services,72.3,56.6,14.5,38.6,7.2,-,-,na
+2014,services,real estate services,real estate services,42.3,39.3,8.8,15.9,1.3,1.3,-,na
+2014,services,professional services,"legal, accounting and management services",55.1,34,18.4,22.1,14.5,-,0.3,na
+2014,services,professional services,architectural and engineering services,45.2,35.7,12.2,12.8,6.7,-,1.4,na
+2014,services,professional services,other professional services,52.4,38.5,28.3,19.8,9.1,-,3.7,na
+2014,services,administrative and support services,security and investigation,59.9,56.5,15,8.8,4.1,-,-,na
+2014,services,administrative and support services,cleaning and landscaping,64.8,62,9.3,5.2,2.8,-,-,na
+2014,services,administrative and support services,other administrative and support services,43,26.1,14.3,12,3.4,0.6,-,na
+2014,services,"community, social and personal services",education,81.3,78.1,6.3,28.1,2.1,-,1,na
+2014,services,"community, social and personal services",health and social services,76.9,76.9,11.6,28.5,1.2,-,2.5,na
+2014,services,"community, social and personal services","other community, social and personal services",66.9,60.5,18.8,13.9,8.9,1,-,na
+2015,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",53.3,46.7,6.5,19.5,8.8,-,0.4,3.8
+2015,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,49.1,28.2,15,12.7,6.4,2.7,2.7,0.5
+2015,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",35.3,21.6,14.4,11.8,5.2,-,1.3,-
+2015,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,34.8,21.7,12.8,4.3,4.7,0.3,-,0.7
+2015,manufacturing,electronic and computer products,electronic and computer products,42.9,25.3,20.1,16.9,11.7,-,-,-
+2015,manufacturing,transport equipment,transport equipment,30.3,19.3,7.9,3.9,4,-,0.1,1.3
+2015,manufacturing,other manufacturing industries,other manufacturing industries,39.2,24.1,18,5.1,2.3,3.9,-,1.6
+2015,construction,construction,construction,28.7,17.7,10.4,4.4,3.7,0.2,-,0.3
+2015,services,wholesale and retail trade,wholesale trade,40.2,20.9,15.8,10.5,8.2,0.5,0.1,0.1
+2015,services,wholesale and retail trade,retail trade,53.4,45.9,10,9.4,3.2,1.1,0.2,0.2
+2015,services,transportation and storage,land transport and supporting services,44.3,29.3,9.8,9.8,6.9,-,-,-
+2015,services,transportation and storage,water transport and supporting services,30.3,15.5,8.8,16,3.8,-,0.8,0.8
+2015,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,s
+2015,services,transportation and storage,other transport and storage services,38.2,25,12.8,8.7,7.3,-,-,2.1
+2015,services,accommodation and food services,accommodation,51.8,33.6,15.5,22.7,1.8,-,-,1.8
+2015,services,accommodation and food services,food and beverage services,67.3,59.2,15.9,9,5.6,3.1,-,0.6
+2015,services,information and communications,"telecommunications, broadcasting and publishing",56.8,37.1,20.5,18.9,24.2,-,3,2.3
+2015,services,information and communications,it and other information services,68.3,27.1,47.1,14.5,18.1,-,-,-
+2015,services,financial and insurance services,financial services,56.5,39.6,22.1,29.4,8.5,-,4.5,4.2
+2015,services,financial and insurance services,insurance services,66.7,41.4,27.6,32.2,10.3,-,-,-
+2015,services,real estate services,real estate services,53.6,46,9.6,10.5,4.6,-,-,-
+2015,services,professional services,"legal, accounting and management services",68.6,38.1,33,20.5,16.3,-,1.6,0.4
+2015,services,professional services,architectural and engineering services,39.7,25.8,16.7,6.8,3.1,-,-,0.3
+2015,services,professional services,other professional services,62,34.6,32.4,17.3,12.8,2.8,1.1,1.1
+2015,services,administrative and support services,security and investigation,59.6,53.6,8.6,2,7.9,-,-,4
+2015,services,administrative and support services,cleaning and landscaping,53.4,49.4,8.3,6.6,3.7,-,1.4,-
+2015,services,administrative and support services,other administrative and support services,53.1,34.3,16,16,9.4,-,0.3,2.1
+2015,services,"community, social and personal services",education,82,75.1,10.6,28.1,0.5,-,0.9,0.5
+2015,services,"community, social and personal services",health and social services,89.6,84.7,19.3,34.5,8.4,-,0.8,0.8
+2015,services,"community, social and personal services","other community, social and personal services",71.4,61.3,20.2,13,4.5,2.9,-,0.4
+2016,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",59.2,51.8,7.1,17.3,8.2,-,-,0.4
+2016,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,31.5,19.2,6.4,4.9,7.9,2.5,-,-
+2016,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",46.4,28.3,14.5,15.1,10.8,-,-,0.6
+2016,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,37.3,27.6,12.1,7.3,2.6,1.7,-,0.6
+2016,manufacturing,electronic and computer products,electronic and computer products,44.6,25.4,15.4,23.8,5.4,-,-,-
+2016,manufacturing,transport equipment,transport equipment,36,23.3,13.2,3.4,2.9,-,-,-
+2016,manufacturing,other manufacturing industries,other manufacturing industries,42.3,26.3,16,10,8,4,1.7,0.3
+2016,construction,construction,construction,28.3,19.3,8.9,4.2,2.3,-,0.4,0.6
+2016,services,wholesale and retail trade,wholesale trade,36,23.4,11.7,11.1,4,-,0.2,1.4
+2016,services,wholesale and retail trade,retail trade,60.9,53.1,9.9,13.8,2.9,-,-,1.2
+2016,services,transportation and storage,land transport and supporting services,37.1,26.3,13.7,9.7,4,-,-,-
+2016,services,transportation and storage,water transport and supporting services,51.4,24.1,8.5,26.9,8.5,-,-,0.5
+2016,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,s
+2016,services,transportation and storage,other transport and storage services,41.2,23.8,15.4,13.8,10.9,-,-,0.6
+2016,services,accommodation and food services,accommodation,62.3,49.1,16,26.4,0.9,-,-,1.9
+2016,services,accommodation and food services,food and beverage services,65.1,57.4,13.9,11.6,3.9,1.3,0.5,1.5
+2016,services,information and communications,"telecommunications, broadcasting and publishing",64.3,50,31,23.8,33.3,-,0.8,-
+2016,services,information and communications,it and other information services,63.6,34.1,27.6,21.7,17.1,-,1.4,0.5
+2016,services,financial and insurance services,financial services,60.3,47.9,24,24.8,17.6,-,1.1,3.6
+2016,services,financial and insurance services,insurance services,78,58.5,15.9,30.5,14.6,-,-,3.7
+2016,services,real estate services,real estate services,59.6,45.7,13,14.9,2.4,-,-,0.5
+2016,services,professional services,"legal, accounting and management services",67,44.2,32.1,30.9,25.1,0.2,0.7,0.9
+2016,services,professional services,architectural and engineering services,43.5,27.2,20.3,8.4,3.8,-,0.6,3.2
+2016,services,professional services,other professional services,58.9,42.2,23.8,25.4,12.4,-,-,9.2
+2016,services,administrative and support services,security and investigation,77.4,68.4,18.7,6.5,10.3,-,3.2,7.7
+2016,services,administrative and support services,cleaning and landscaping,64.9,61.2,9.9,6.8,2.8,0.3,-,-
+2016,services,administrative and support services,other administrative and support services,49.6,37.8,17.2,13.2,5.2,-,-,2.3
+2016,services,"community, social and personal services",education,76.6,73.4,14.6,21.9,3.1,-,1,2.6
+2016,services,"community, social and personal services",health and social services,80.4,78.3,24.7,31.9,3,-,0.4,6.8
+2016,services,"community, social and personal services","other community, social and personal services",67.2,57,23.5,14.8,4.9,-,0.9,1.9
+2017,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",55.6,51.5,13,9.6,0.7,-,-,-
+2017,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,38.7,21.6,12.6,3,6.5,-,-,-
+2017,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",38,23.3,15.3,14,6,-,-,0.7
+2017,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,42.7,25.2,17.4,7.3,2.9,0.6,-,-
+2017,manufacturing,electronic and computer products,electronic and computer products,49.6,25.9,23,20,16.3,0.7,-,0.7
+2017,manufacturing,transport equipment,transport equipment,31.8,19.4,12.2,7.6,2.3,-,0.2,0.4
+2017,manufacturing,other manufacturing industries,other manufacturing industries,30.5,20.3,15.4,6.4,6.4,-,-,2.3
+2017,construction,construction,construction,30.2,17,13,4.2,2.5,-,-,0.7
+2017,services,wholesale and retail trade,wholesale trade,49.5,32.4,15.5,11.4,7.1,1.3,1,1.8
+2017,services,wholesale and retail trade,retail trade,57,53.2,8.7,10.2,3.6,1.3,-,1
+2017,services,transportation and storage,land transport and supporting services,51.7,37.6,12.9,12.4,6.7,-,1.1,-
+2017,services,transportation and storage,water transport and supporting services,46.4,24.6,18,24.6,3.8,-,-,-
+2017,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,s
+2017,services,transportation and storage,other transport and storage services,43.5,25.5,15.8,17.7,7.1,-,1.6,1.9
+2017,services,accommodation and food services,accommodation,60.2,35.7,15.3,26.5,8.2,-,9.2,-
+2017,services,accommodation and food services,food and beverage services,71,63.6,18.1,13.6,4.2,2,1.4,0.2
+2017,services,information and communications,"telecommunications, broadcasting and publishing",70.4,41.6,40.8,23.2,21.6,-,2.4,5.6
+2017,services,information and communications,it and other information services,58.2,31.8,33.3,22.4,16.4,-,3,0.5
+2017,services,financial and insurance services,financial services,62.9,48.8,18.6,31,15.5,1.4,5.3,5.8
+2017,services,financial and insurance services,insurance services,78.2,73.1,19.2,29.5,7.7,-,-,-
+2017,services,real estate services,real estate services,52.6,43.6,5.2,14.2,5.2,-,-,0.9
+2017,services,professional services,"legal, accounting and management services",54.7,32.8,21.6,18.2,15.6,2.6,0.5,2.3
+2017,services,professional services,architectural and engineering services,54.3,38.7,15.7,10.7,8,-,-,1
+2017,services,professional services,other professional services,59.7,25.6,34.7,21.6,12.5,-,-,5.7
+2017,services,administrative and support services,security and investigation,79.4,73.8,21.3,9.2,12.1,-,-,1.4
+2017,services,administrative and support services,cleaning and landscaping,61.6,57.2,11.1,8.4,2,-,-,-
+2017,services,administrative and support services,other administrative and support services,59.4,38.6,25.3,14.2,10.5,-,0.6,1.7
+2017,services,"community, social and personal services",education,80.8,74.6,13,29.4,12.4,-,0.6,0.6
+2017,services,"community, social and personal services",health and social services,89.4,85,15.7,37.8,7.9,0.4,0.8,1.6
+2017,services,"community, social and personal services","other community, social and personal services",62.8,52.1,14.7,14.1,9,2.5,-,-
+2018,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",51.6,39.1,11.7,16.8,3.1,0.8,2.7,-
+2018,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,47.2,35.7,15.1,14.1,4.5,2.5,-,-
+2018,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",57.2,39.5,17.8,21.1,5.3,-,-,1.3
+2018,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,40.1,29,11.3,10.2,4,1.3,1.3,1.3
+2018,manufacturing,electronic and computer products,electronic and computer products,60.3,35.3,14.7,30.1,14.7,-,1.3,1.9
+2018,manufacturing,transport equipment,transport equipment,38.6,19.9,14.4,13.3,6.8,1.1,1.5,4.4
+2018,manufacturing,other manufacturing industries,other manufacturing industries,28.2,20.6,7.2,10.7,4.8,1.7,-,1
+2018,construction,construction,construction,32,17.4,11.8,11.1,1.7,1.6,2.6,2.9
+2018,services,wholesale and retail trade,wholesale trade,47.1,29.9,15.3,16.1,8.1,0.6,0.6,1.6
+2018,services,wholesale and retail trade,retail trade,73.7,64.2,16.2,13.9,3.6,1.3,0.5,6.4
+2018,services,transportation and storage,land transport and supporting services,52,41.9,11.7,15.1,10.1,0.6,2.8,3.9
+2018,services,transportation and storage,water transport and supporting services,58.9,36.8,10.8,31.4,5.9,-,-,2.7
+2018,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,s
+2018,services,transportation and storage,other transport and storage services,39.8,27,9.9,16.4,5.9,-,-,1
+2018,services,accommodation and food services,accommodation,78.5,57.9,19.6,42.1,1.9,1.9,-,8.4
+2018,services,accommodation and food services,food and beverage services,75.2,66.3,22.7,21.1,8.2,1.5,2.8,6.3
+2018,services,information and communications,"telecommunications, broadcasting and publishing",77.2,51.8,30.7,36,24.6,-,5.3,3.5
+2018,services,information and communications,it and other information services,61,33.1,28.3,19.3,20.5,-,2.4,-
+2018,services,financial and insurance services,financial services,62.8,48.2,24.2,32.3,22.1,0.3,3.9,6.3
+2018,services,financial and insurance services,insurance services,75.6,60.5,12.8,44.2,12.8,-,3.5,8.1
+2018,services,real estate services,real estate services,64.2,57.9,12.6,24.7,13.2,2.6,7.4,5.8
+2018,services,professional services,"legal, accounting and management services",70.8,42.9,30.5,29.7,21.3,-,0.3,5
+2018,services,professional services,architectural and engineering services,52.7,32.9,18.1,21,17,4,2,5.1
+2018,services,professional services,other professional services,50.3,26,30.5,19.2,15.3,-,0.6,0.6
+2018,services,administrative and support services,security and investigation,77.4,62.1,8.9,7.3,8.9,-,4,2.4
+2018,services,administrative and support services,cleaning and landscaping,67.2,61.6,13.8,11,4.2,-,0.8,2.8
+2018,services,administrative and support services,other administrative and support services,60.6,39.7,23.3,18.5,16.1,3.6,1.8,1.2
+2018,services,"community, social and personal services",education,86.3,75.7,15.9,34.5,7.5,-,0.4,4.4
+2018,services,"community, social and personal services",health and social services,91,85.4,19,41.8,9.7,2.2,3,3.4
+2018,services,"community, social and personal services","other community, social and personal services",69.5,59.2,15.6,24.1,8,0.8,0.8,2.2
+2019,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",62.3,47.4,14.5,15.5,8.1,3.9,2.3,2.3
+2019,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,43.4,29.3,11.6,18.2,5.6,-,-,1
+2019,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",60.4,29.6,28.4,18.9,10.1,3,4.1,6.5
+2019,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,39.2,22.3,14.7,10.7,5.2,-,-,-
+2019,manufacturing,electronic and computer products,electronic and computer products,56.7,30.5,14.2,31.2,5,-,-,2.1
+2019,manufacturing,transport equipment,transport equipment,41.8,28.5,14.8,16.3,3.9,1.3,1.1,1.1
+2019,manufacturing,other manufacturing industries,other manufacturing industries,47.7,19.9,10.6,21.9,11.3,-,-,1.3
+2019,construction,construction,construction,28.8,17.1,12.7,7.8,1,-,0.8,1.4
+2019,services,wholesale and retail trade,wholesale trade,51,30.3,12.5,21.7,5,0.7,0.8,0.7
+2019,services,wholesale and retail trade,retail trade,64.3,51.6,16.8,15.4,8.6,1.2,1.2,3
+2019,services,transportation and storage,land transport and supporting services,41,30.7,11.7,11.7,11.2,2.4,1,2.4
+2019,services,transportation and storage,water transport and supporting services,46.5,28.1,10.8,22.7,6.5,-,-,0.5
+2019,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,s
+2019,services,transportation and storage,other transport and storage services,44.7,27.8,15.2,20.4,5.8,0.6,-,2.3
+2019,services,accommodation and food services,accommodation,73.3,44,18.1,40.5,0.9,1.7,0.9,7.8
+2019,services,accommodation and food services,food and beverage services,73.5,59.9,18.8,21.6,5.9,3,1.4,1.7
+2019,services,information and communications,"telecommunications, broadcasting and publishing",56.9,39.2,22.3,25.4,12.3,-,3.1,0.8
+2019,services,information and communications,it and other information services,58,22,32.9,30.8,22.7,2.4,2.4,0.3
+2019,services,financial and insurance services,financial services,61.2,41.1,18.8,33.8,16,1.5,3,4.3
+2019,services,financial and insurance services,insurance services,66.7,40.6,14.6,43.8,14.6,-,-,4.2
+2019,services,real estate services,real estate services,51.1,38,15.7,19.2,4.4,-,1.3,-
+2019,services,professional services,"legal, accounting and management services",70.2,48.8,30,29.1,18.5,0.5,2.2,1
+2019,services,professional services,architectural and engineering services,52,32.9,19.9,24.8,7,0.3,0.5,1.3
+2019,services,professional services,other professional services,56.1,33.5,22.5,19.1,17.3,1.2,1.2,1.2
+2019,services,administrative and support services,security and investigation,78.8,63.5,26.3,12.8,-,-,-,-
+2019,services,administrative and support services,cleaning and landscaping,59,50.9,11.1,8.1,2,-,1.2,0.2
+2019,services,administrative and support services,other administrative and support services,50.9,30.6,21.6,18.4,12.7,2.3,-,2.3
+2019,services,"community, social and personal services",education,79.2,76.1,13.5,31.3,9.7,1.9,3.5,3.5
+2019,services,"community, social and personal services",health and social services,85.9,80.6,10,39.2,1.9,0.6,0.9,4.7
+2019,services,"community, social and personal services","other community, social and personal services",71.4,57.6,22.1,17.9,6.7,1,4,2.3
+2020,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",86.7,40.9,49.2,58.5,53.2,11.6,18.6,14.6
+2020,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,75.1,27.6,40,41.1,47,8.6,15.1,8.1
+2020,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",74.7,25.9,35.8,27.8,50.6,3.7,11.7,18.5
+2020,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,72.9,28.2,34.6,38.3,44.1,14.5,15.5,8.8
+2020,manufacturing,electronic and computer products,electronic and computer products,81.7,26.8,52.3,56.2,51.6,10.5,11.8,4.6
+2020,manufacturing,transport equipment,transport equipment,73.6,33.4,35.8,33.8,41,13.1,15.5,13.7
+2020,manufacturing,other manufacturing industries,other manufacturing industries,77.7,30.9,32.5,51.7,42.3,12.5,7.5,7.5
+2020,construction,construction,construction,65.2,23.7,33.6,34.2,43.3,13.1,18.6,10.7
+2020,services,wholesale and retail trade,wholesale trade,77.6,44.7,38.7,47,39.4,6.5,13.3,5.7
+2020,services,wholesale and retail trade,retail trade,92.2,73.7,46.9,52.6,38.9,10.4,17.8,13.7
+2020,services,transportation and storage,land transport and supporting services,59.2,36.1,25.2,35.4,38.1,6.8,8.8,7.5
+2020,services,transportation and storage,water transport and supporting services,87.6,38.4,33,58.4,54.1,5.4,9.2,9.7
+2020,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,s
+2020,services,transportation and storage,other transport and storage services,72.5,25.8,37.5,51.9,45.3,3.3,13.6,8.6
+2020,services,accommodation and food services,accommodation,91.9,57.3,49.2,71.8,53.2,-,13.7,10.5
+2020,services,accommodation and food services,food and beverage services,90.1,72.2,55.5,52,38.6,11.7,18.6,14.4
+2020,services,information and communications,"telecommunications, broadcasting and publishing",89.9,43.2,55.4,54.7,74.8,2.2,7.2,5.8
+2020,services,information and communications,it and other information services,85.1,37,55.4,32.6,76.6,0.3,9.2,7.9
+2020,services,financial and insurance services,financial services,73.5,36.9,36.6,41.3,56.1,1.3,6,7.3
+2020,services,financial and insurance services,insurance services,97.7,58.1,54.7,68.6,72.1,-,9.3,11.6
+2020,services,real estate services,real estate services,83.2,52,34.7,64.9,49,10.9,14.9,5.9
+2020,services,professional services,"legal, accounting and management services",91.2,49.3,53.4,62.2,72.2,7.1,10.5,15.1
+2020,services,professional services,architectural and engineering services,84.3,41.5,38.3,59.3,62.7,11.5,18.4,10
+2020,services,professional services,other professional services,85.1,29.9,50.7,44,64.9,10.4,14.2,9.7
+2020,services,administrative and support services,security and investigation,85.9,73,32.5,36.2,38,12.3,19,10.4
+2020,services,administrative and support services,cleaning and landscaping,85,70.8,33.3,27,28.3,7.3,11.8,13.3
+2020,services,administrative and support services,other administrative and support services,82.7,41.2,41.4,44.6,53.5,7.7,14.2,6.5
+2020,services,"community, social and personal services",education,86,71.5,32.6,38.8,44.6,13.2,6.6,7
+2020,services,"community, social and personal services",health and social services,86.9,71,37.9,56.7,38.9,4.5,17.5,9.9
+2020,services,"community, social and personal services","other community, social and personal services",76.8,58.4,52.6,43.3,41.6,15.1,16.5,13.3
+2021,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",95.5,50,57.5,40.9,55.5,-,21.1,7.1
+2021,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,92.9,29.6,45,44.4,49.1,3,17.8,3
+2021,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",87.8,40.2,43.9,52.4,68.9,1.2,18.3,10.4
+2021,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,89.8,34.6,47,40.9,58.6,1.1,15.9,7.4
+2021,manufacturing,electronic and computer products,electronic and computer products,87,30.6,50,57.4,70.4,0.9,4.6,8.3
+2021,manufacturing,transport equipment,transport equipment,93.3,32.1,48.7,54,60.7,1.5,21.2,8.8
+2021,manufacturing,other manufacturing industries,other manufacturing industries,84.5,34.3,46,38.9,48.1,0.4,14.2,5
+2021,construction,construction,construction,84.4,32.1,40.3,37.5,50.1,2.4,14.1,6.5
+2021,services,wholesale and retail trade,wholesale trade,92.6,40.3,46.8,53.2,62.8,1.2,14.6,6.2
+2021,services,wholesale and retail trade,retail trade,92.7,71.2,49.7,58.6,56.1,1.1,17.2,6.2
+2021,services,transportation and storage,land transport and supporting services,86.8,50.8,46.6,63,56.1,-,17.5,9
+2021,services,transportation and storage,water transport and supporting services,91.1,28.6,46.4,73.2,58.9,3,16.7,4.2
+2021,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,s
+2021,services,transportation and storage,other transport and storage services,96.7,38.8,47,50.3,66,1.5,20.7,3.3
+2021,services,accommodation and food services,accommodation,98,75.5,59.2,65.3,52,-,11.2,6.1
+2021,services,accommodation and food services,food and beverage services,91.9,72.7,57.5,44.8,36.8,4.5,21.2,10.5
+2021,services,information and communications,"telecommunications, broadcasting and publishing",93,48.8,62.8,62,82.9,2.3,6.2,7.8
+2021,services,information and communications,it and other information services,92.3,46,67.7,50.5,71.6,5.3,9.1,10.9
+2021,services,financial and insurance services,financial services,96.8,53.7,50.8,69.3,77.5,1.1,9.3,6.9
+2021,services,financial and insurance services,insurance services,100,73.3,59.3,77.9,74.4,3.5,-,12.8
+2021,services,real estate services,real estate services,85.6,57.4,45.1,44.1,46.7,-,14.9,7.2
+2021,services,professional services,"legal, accounting and management services",94,46.9,58.9,65.1,70.7,1.6,14.5,8.1
+2021,services,professional services,architectural and engineering services,87,38.9,45,50.5,64.6,-,5.3,11.4
+2021,services,professional services,other professional services,88.1,38.5,44.8,51.7,57.3,-,23.1,4.9
+2021,services,administrative and support services,security and investigation,89.8,73.5,36.1,27.9,49,3.4,24.5,6.8
+2021,services,administrative and support services,cleaning and landscaping,86.5,68,42.3,34,41.4,0.3,9.1,5.2
+2021,services,administrative and support services,other administrative and support services,91.2,49.2,57.7,49.2,71.2,3.1,17.6,6.6
+2021,services,"community, social and personal services",education,99.1,71.6,48.6,56.8,54.1,-,9,8.6
+2021,services,"community, social and personal services",health and social services,92.5,73.7,52.7,58.3,50.5,0.9,13.2,6.6
+2021,services,"community, social and personal services","other community, social and personal services",94.3,75.8,60.4,55.2,56.8,6.6,22.5,15.5
+2022,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",68,41.1,34.2,32.6,28.5,9.7,14.7,9.7
+2022,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,73.8,42.7,27.4,42.1,31.7,12.2,15.2,15.9
+2022,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",73.1,23.7,32.7,25,39.1,3.8,8.3,15.4
+2022,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,60.5,25,28.8,24.4,27.8,6.5,14.1,15.3
+2022,manufacturing,electronic and computer products,electronic and computer products,75.4,25.4,38.8,52.2,44.8,-,11.2,15.7
+2022,manufacturing,transport equipment,transport equipment,63.2,16.6,35.3,30.1,32.8,12.7,15.6,20.8
+2022,manufacturing,other manufacturing industries,other manufacturing industries,55.4,19.4,28.8,31.5,23.9,2.3,5.4,18.9
+2022,construction,construction,construction,59.4,22.5,31.4,25.9,24.1,9.1,17.2,14.8
+2022,services,wholesale and retail trade,wholesale trade,69.6,29.3,34.1,36.5,36.9,4.9,11.2,11.5
+2022,services,wholesale and retail trade,retail trade,82.6,61,45.1,42.5,32.3,10.4,24.1,26.5
+2022,services,transportation and storage,land transport and supporting services,73.3,46.7,36.4,42.1,39.5,9.2,19,14.4
+2022,services,transportation and storage,water transport and supporting services,65.1,18,29.7,43,42.4,4.1,8.1,16.9
+2022,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,s
+2022,services,transportation and storage,other transport and storage services,69,29.4,40.7,33,33.8,7.7,19.5,17.3
+2022,services,accommodation and food services,accommodation,76.1,51.4,41.3,47.7,22,1.8,14.7,14.7
+2022,services,accommodation and food services,food and beverage services,80.8,56.9,42.7,36.1,22.9,11.8,18.9,19.3
+2022,services,information and communications,"telecommunications, broadcasting and publishing",80.4,28.3,58.7,53.6,51.4,7.2,8.7,14.5
+2022,services,information and communications,it and other information services,83.4,33.5,54,41.9,56.9,7,13.1,14.4
+2022,services,financial and insurance services,financial services,77.4,32.7,35.4,47.5,54,4.3,8.8,15.3
+2022,services,financial and insurance services,insurance services,s,s,s,s,s,s,s,s
+2022,services,real estate services,real estate services,77,46,25.3,28.2,24.7,9.8,10.9,19.5
+2022,services,professional services,"legal, accounting and management services",82.9,38.9,44,44.3,53.4,7.3,8.5,17.6
+2022,services,professional services,architectural and engineering services,71,32.7,36.7,38,35.9,12.4,20.6,20.1
+2022,services,professional services,other professional services,85,49.4,48.3,21.7,57.8,10,3.9,20.6
+2022,services,administrative and support services,security and investigation,90.8,71.5,51.5,32.3,39.2,7.7,23.8,38.5
+2022,services,administrative and support services,cleaning and landscaping,63,50.3,25.3,23.3,14.8,7.5,12.5,14
+2022,services,administrative and support services,other administrative and support services,71.5,30.2,37.1,43.6,39.2,4.1,16.2,19.6
+2022,services,"community, social and personal services",education,96,73.2,46,69.2,51.5,18.7,34.8,30.3
+2022,services,"community, social and personal services",health and social services,82.2,64,43.8,47.3,36.3,12,17.1,17.1
+2022,services,"community, social and personal services","other community, social and personal services",77.4,53.7,46,39.9,39,16.8,16.2,20.8
+2023,manufacturing,"food, beverages and tobacco","food, beverages and tobacco",69.6,47.2,45.7,32.4,27,6.1,24.2,18.9
+2023,manufacturing,paper/ rubber/ plastic products and printing,paper/ rubber/ plastic products and printing,59.9,21,44.4,36.4,19.1,3.1,12.3,10.5
+2023,manufacturing,"petroleum, chemical and pharmaceutical products","petroleum, chemical and pharmaceutical products",51.8,19.4,18.8,20.6,28.2,2.9,14.7,8.8
+2023,manufacturing,fabricated metal products and machinery,fabricated metal products and machinery,54.2,16.9,27.6,17.1,25.1,4.3,15.3,6.8
+2023,manufacturing,electronic and computer products,electronic and computer products,83.9,15.3,43.1,29.9,41.6,9.5,8.8,10.2
+2023,manufacturing,transport equipment,transport equipment,57.8,23.3,35.6,26.6,27.5,15.6,25,19.3
+2023,manufacturing,other manufacturing industries,other manufacturing industries,49.2,32.3,28,20.6,19.1,5.8,6.2,7.7
+2023,construction,construction,construction,58.1,22.5,32.6,21.8,25.6,12.3,22.4,13.8
+2023,services,wholesale and retail trade,wholesale trade,66.6,27,33,33,32.8,9.1,17.1,8.2
+2023,services,wholesale and retail trade,retail trade,76,50,41.5,29.2,30.6,8.5,21.1,12.7
+2023,services,transportation and storage,land transport and supporting services,67.1,35.6,37,31.1,32.4,0.9,14.2,9.6
+2023,services,transportation and storage,water transport and supporting services,68.4,15.6,31.6,34,37.3,6.1,22.6,8
+2023,services,transportation and storage,air transport and supporting services,s,s,s,s,s,s,s,s
+2023,services,transportation and storage,other transport and storage services,68.8,21.9,39.3,33.3,23.1,10.5,18.3,12.9
+2023,services,accommodation and food services,accommodation,77.3,48.2,50.9,37.3,14.5,6.4,15.5,7.3
+2023,services,accommodation and food services,food and beverage services,78.2,53.6,54.2,42.9,24.8,9.9,24.8,21.4
+2023,services,information and communications,"telecommunications, broadcasting and publishing",83.9,40,54.2,34.8,64.5,22.6,20.6,17.4
+2023,services,information and communications,it and other information services,81.6,19.9,54.9,38.1,58.9,5.1,9.9,6.4
+2023,services,financial and insurance services,financial services,74.9,38.8,44.3,38.2,46.4,8.2,12.4,8.2
+2023,services,financial and insurance services,insurance services,84.8,45.5,56.6,56.6,50.5,3,8.1,21.2
+2023,services,real estate services,real estate services,71.7,37.7,31.6,30.7,23.1,9.4,16,11.3
+2023,services,professional services,"legal, accounting and management services",81.4,31.3,56.3,42.7,55.7,7.6,13,12.6
+2023,services,professional services,architectural and engineering services,64.8,35.8,38.3,30,36.2,7,19.5,13.6
+2023,services,professional services,other professional services,83.6,34.8,47.3,36.3,43.8,10.5,14.1,12.1
+2023,services,administrative and support services,security and investigation,70.8,59.6,33.5,25.5,27.3,16.1,23.6,28.6
+2023,services,administrative and support services,cleaning and landscaping,64.9,49.2,32.3,23.5,21.2,9.1,19.6,10.9
+2023,services,administrative and support services,other administrative and support services,60.8,23.9,40,30.1,33.2,7,10.4,7.9
+2023,services,"community, social and personal services",education,73.4,62.2,31.1,34.5,39,11.6,18.7,13.5
+2023,services,"community, social and personal services",health and social services,76.8,58.4,39.8,41.1,30.4,8.9,15.6,7.1
+2023,services,"community, social and personal services","other community, social and personal services",75.6,49.8,50.8,35.1,34.9,17.2,24.9,21.5

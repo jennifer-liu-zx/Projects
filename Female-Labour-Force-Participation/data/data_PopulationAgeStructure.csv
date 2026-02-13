@@ -1,0 +1,225 @@
+"flagCode","country","AgeStructure_PctAt0To14_pct_2024","AgeStructure_PctAt15To64_pct_2024","AgeStructure_PctAt65Plus_pct_2024"
+"NE","Niger",49.5,47.8,2.7
+"UG","Uganda",47,50.6,2.4
+"AO","Angola",46.9,50.7,2.4
+"ML","Mali",46.8,50.1,3.1
+"TD","Chad",45.8,51.7,2.5
+"CD","DR Congo",45.7,51.8,2.5
+"BJ","Benin",45.3,52.2,2.5
+"MZ","Mozambique",44.7,52.4,2.9
+"BI","Burundi",42.3,54.4,3.4
+"GW","Guinea-Bissau",42.3,54.6,3.1
+"ZM","Zambia",42.1,55.1,2.8
+"SS","South Sudan",42.1,55.3,2.6
+"BF","Burkina Faso",41.6,55.1,3.2
+"CM","Cameroon",41.5,55.3,3.2
+"SO","Somalia",41.4,55.8,2.8
+"TZ","Tanzania",41.2,55.4,3.4
+"GN","Guinea",40.9,55.1,4
+"SN","Senegal",40.7,55.9,3.4
+"NG","Nigeria",40.4,56.2,3.4
+"SD","Sudan",40.1,56.7,3.2
+"SL","Sierra Leone",40.1,57.4,2.5
+"AF","Afghanistan",39.6,57.5,2.9
+"LR","Liberia",38.9,57.9,3.2
+"ET","Ethiopia",38.7,58,3.4
+"TG","Togo",38.7,57,4.3
+"TL","Timor-Leste",38.7,56.8,4.5
+"CF","Central African Republic",38.5,58,3.5
+"ZW","Zimbabwe",38.3,57.8,3.9
+"GM","Gambia",38.2,58.1,3.7
+"CG","Republic of the Congo",37.8,57.8,4.3
+"MW","Malawi",37.7,58.4,3.9
+"GH","Ghana",37.4,58.2,4.4
+"RW","Rwanda",37.2,59.7,3.1
+"PG","Papua New Guinea",37.1,58.9,4
+"MG","Madagascar",37,59.1,3.9
+"TJ","Tajikistan",36.9,59.3,3.9
+"PS","Palestine",36.7,59.5,3.9
+"ST","Sao Tome and Principe",36.4,60.3,3.2
+"CI","Ivory Coast",36.1,60.9,3
+"KE","Kenya",35.8,60.9,3.4
+"MR","Mauritania",35.7,59.9,4.4
+"ER","Eritrea",35.7,60.3,4
+"GQ","Equatorial Guinea",35.6,59.4,5
+"IQ","Iraq",34.6,61.7,3.6
+"GA","Gabon",34.6,61.1,4.3
+"PK","Pakistan",34.4,60.7,4.9
+"YE","Yemen",34.4,62.2,3.4
+"NA","Namibia",34.1,62,3.9
+"EG","Egypt",33.8,60.6,5.6
+"SY","Syria",33,62.8,4.2
+"KM","Comoros",32.6,62.8,4.6
+"LY","Libya",32.3,63.2,4.6
+"LS","Lesotho",32,62.7,5.4
+"SZ","Eswatini",31.6,64.3,4
+"GT","Guatemala",31.5,63.2,5.4
+"VU","Vanuatu",31.1,63.8,5
+"JO","Jordan",30.9,64.9,4.2
+"DZ","Algeria",30.8,62.3,6.9
+"SB","Solomon Islands",30.6,64.2,5.3
+"HT","Haiti",30.5,65.3,4.2
+"PH","Philippines",30.2,64.3,5.6
+"LA","Laos",30.1,65,4.8
+"MH","Marshall Islands",30,64.3,5.7
+"OM","Oman",29.8,66.2,4
+"UZ","Uzbekistan",29.6,63.7,6.7
+"NR","Nauru",29.6,66,4.4
+"TO","Tonga",29.3,63.2,7.4
+"TV","Tuvalu",29.2,63.2,7.6
+"KG","Kyrgyzstan",29.1,64,6.9
+"KH","Cambodia",28.9,65.8,5.3
+"HN","Honduras",28.7,65.7,5.6
+"BW","Botswana",28.7,65.2,6.1
+"BO","Bolivia",28.5,64.5,7
+"DJ","Djibouti",28.4,67.4,4.2
+"BZ","Belize",27.7,66.7,5.5
+"KZ","Kazakhstan",27.6,62.8,9.6
+"IL","Israel",27.5,60.3,12.3
+"ZA","South Africa",27.2,65.3,7.5
+"FM","Micronesia",27,67.3,5.7
+"WS","Samoa",26.9,65.9,7.2
+"EC","Ecuador",26.8,64.1,9.1
+"KI","Kiribati",26.8,67.9,5.4
+"CV","Cape Verde",26.4,67.2,6.4
+"GU","Guam",26.4,62.7,10.9
+"PE","Peru",25.8,66.2,8
+"NP","Nepal",25.8,67.8,6.4
+"MA","Morocco",25.7,65.9,8.4
+"MN","Mongolia",25.7,68.4,5.9
+"DO","Dominican Republic",25.5,66.9,7.6
+"SV","El Salvador",25.3,66.3,8.4
+"AS","American Samoa",25.3,66,8.7
+"BD","Bangladesh",25.1,67.1,7.8
+"NI","Nicaragua",25.1,68.9,6
+"VE","Venezuela",25,65.9,9.1
+"PA","Panama",25,64.8,10.1
+"FJ","Fiji",24.7,66.4,8.9
+"MF","Saint Martin",24.7,64.5,10.8
+"IN","India",24.5,68.7,6.8
+"TM","Turkmenistan",24.5,68.6,6.9
+"MM","Myanmar",24.4,68.5,7.1
+"TN","Tunisia",24.4,65.2,10.4
+"ID","Indonesia",23.8,68.3,8
+"JM","Jamaica",23.8,65.7,10.4
+"GY","Guyana",23.5,68.4,8.1
+"MX","Mexico",23.3,68.6,8.2
+"IR","Iran",23.3,69.8,7
+"AR","Argentina",23.3,63.9,12.8
+"VN","Vietnam",23.2,68.5,8.3
+"BT","Bhutan",23.1,70.2,6.7
+"KW","Kuwait",23,73.4,3.6
+"SA","Saudi Arabia",22.9,72.7,4.4
+"LK","Sri Lanka",22.6,65,12.4
+"SR","Suriname",22.5,70,7.5
+"MV","Maldives",22.4,71.5,6.1
+"CO","Colombia",22.3,66.5,11.2
+"AZ","Azerbaijan",22.3,68.7,9
+"MY","Malaysia",22.2,69.4,8.4
+"PY","Paraguay",22.2,68.4,9.4
+"MP","Northern Mariana Islands",22.1,67.7,10.2
+"GD","Grenada",21.9,65.3,12.8
+"AG","Antigua and Barbuda",21.8,67.6,10.5
+"TR","Turkey",21.7,68.6,9.6
+"BN","Brunei",21.7,70.8,7.5
+"BS","Bahamas",21.4,70,8.6
+"AI","Anguilla",20.8,67.5,11.7
+"NC","New Caledonia",20.7,68.4,10.8
+"DM","Dominica",20.7,65.6,13.7
+"GE","Georgia",20.6,62.7,16.7
+"GL","Greenland",20.4,67.1,12.5
+"TC","Turks and Caicos Islands",20.4,73.2,6.4
+"PF","French Polynesia",20.3,68.7,11
+"FO","Faroe Islands",20,61.5,18.5
+"GI","Gibraltar",20,62.5,17.5
+"KP","North Korea",19.9,68.9,11.2
+"IS","Iceland",19.8,63.2,17.1
+"WF","Wallis and Futuna",19.8,67.5,12.7
+"BR","Brazil",19.6,69.5,10.9
+"CL","Chile",19.2,67.3,13.6
+"CW","Curacao",19.2,62.3,18.5
+"KN","Saint Kitts and Nevis",19.2,68.1,12.7
+"NZ","New Zealand",19,64.2,16.9
+"LB","Lebanon",18.9,71.6,9.5
+"UY","Uruguay",18.9,65.4,15.7
+"CR","Costa Rica",18.8,70.2,11.1
+"VC","Saint Vincent and the Grenadines",18.8,68.2,13
+"TT","Trinidad and Tobago",18.7,67.2,14.1
+"VI","United States Virgin Islands",18.7,59.8,21.5
+"IE","Ireland",18.6,65.5,15.8
+"SX","Sint Maarten",18.4,66.3,15.2
+"AU","Australia",18.3,64.7,17
+"CK","Cook Islands",18.2,65.9,16
+"US","United States",18.1,63.4,18.5
+"BH","Bahrain",18.1,77.7,4.3
+"AL","Albania",18,66.9,15.1
+"LC","Saint Lucia",17.9,66.7,15.4
+"AM","Armenia",17.7,67,15.3
+"ME","Montenegro",17.7,64.4,17.9
+"SC","Seychelles",17.7,72.4,10
+"PW","Palau",17.5,71.3,11.2
+"KY","Cayman Islands",17.4,65.9,16.7
+"FR","France",17.3,60.7,22
+"AW","Aruba",17.2,65.7,17.1
+"SE","Sweden",17.1,62.1,20.8
+"JE","Jersey",17,64.6,18.3
+"BE","Belgium",16.9,62.8,20.2
+"GB","United Kingdom",16.7,63.9,19.3
+"LU","Luxembourg",16.7,67.1,16.1
+"BB","Barbados",16.6,67,16.3
+"VG","British Virgin Islands",16.6,71.3,12.1
+"RU","Russia",16.5,65.7,17.8
+"AE","United Arab Emirates",16.4,81.4,2.2
+"BM","Bermuda",16.4,60.9,22.7
+"CN","China",16.3,69.3,14.4
+"CU","Cuba",16.3,66.5,17.2
+"NO","Norway",16.3,64.5,19.1
+"DK","Denmark",16.2,62.9,20.8
+"FI","Finland",16.2,60.3,23.5
+"BY","Belarus",16.1,66.1,17.8
+"MK","North Macedonia",16,68.4,15.6
+"IM","Isle of Man",16,61.9,22.1
+"TH","Thailand",15.8,69,15.1
+"MS","Montserrat",15.8,76.1,8
+"CZ","Czech Republic",15.7,63.8,20.5
+"CY","Cyprus",15.6,70,14.4
+"CA","Canada",15.5,63.4,21
+"RO","Romania",15.4,62,22.6
+"SK","Slovakia",15.3,66.5,18.1
+"LI","Liechtenstein",15.3,63.9,20.8
+"NL","Netherlands",15.2,64.1,20.7
+"LT","Lithuania",15.2,62.6,22.2
+"EE","Estonia",15.2,62.2,22.6
+"CH","Switzerland",15.1,64.6,20.3
+"MU","Mauritius",15.1,71,13.9
+"MD","Moldova",14.8,70.2,15
+"LV","Latvia",14.7,63,22.2
+"HU","Hungary",14.6,63.9,21.5
+"SG","Singapore",14.6,71.1,14.3
+"MT","Malta",14.5,62.4,23.1
+"RS","Serbia",14.4,65.6,20
+"MO","Macau",14.4,69.9,15.7
+"SI","Slovenia",14.3,62.5,23.2
+"GG","Guernsey",14.3,64.1,21.5
+"PL","Poland",14.2,65.9,19.8
+"SM","San Marino",14.2,64.3,21.5
+"AT","Austria",14.1,64.7,21.2
+"BL","Saint Barthelemy",13.9,63.1,23
+"DE","Germany",13.8,62.5,23.7
+"GR","Greece",13.8,62.6,23.6
+"BG","Bulgaria",13.8,65.2,21
+"HR","Croatia",13.8,63.1,23.1
+"HK","Hong Kong",13.2,64.8,21.9
+"BA","Bosnia and Herzegovina",13.1,68.3,18.6
+"QA","Qatar",13.1,85.4,1.5
+"PM","Saint Pierre and Miquelon",13.1,61.6,25.3
+"ES","Spain",13,66.1,20.9
+"PT","Portugal",12.7,65,22.3
+"PR","Puerto Rico",12.5,62.6,24.9
+"UA","Ukraine",12.3,67.8,19.9
+"JP","Japan",12.1,58.4,29.5
+"TW","Taiwan",12.1,69,18.8
+"AD","Andorra",12,67.7,20.4
+"IT","Italy",11.9,64.5,23.6
+"KR","South Korea",11.3,69.4,19.3
+"MC","Monaco",9.1,53.8,37.1
