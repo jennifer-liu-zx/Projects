@@ -22,7 +22,7 @@
 
 ## Research and Writing
 
-### Global Price Shocks and Downstreaming Policy on Indonesia’s Nickel Export Boom?
+### Global Price Shocks and Downstreaming Policy on Indonesia’s Nickel Export Boom
 - Course: ECON0023 International Trade (UCL, Year 3)
 - Directory: `Indonesian-Nickel-Exports`
 - Language: R
