@@ -25,14 +25,12 @@
 ### Global Price Shocks and Downstreaming Policy on Indonesia’s Nickel Export Boom
 - Course (UCL, Year 3): ECON0023 International Trade
 - Directory: `Indonesian-Nickel-Exports`
-- Language: R
-- Featured: Standard Trade Model, Fixed Effects Regression
+- Featured: Standard Trade Model, Fixed Effects Regression (R)
   
 ### Boosting Female Labour Force Participation in Singapore
 - Competition: MOM-NTU Economics Essay Competition 2025
 - Directory: `Female-Labour-Force-Pariticipation`
-- Language: R
-- Featured: similarity analysis, policy analysis and design
+- Featured: Mahalanobis Similarity (R), policy analysis and design
 
 ### YouTube as a Carrier of Cultural Heritage
 - Course (NUS, Year 1-2): NHS2061 Post-Conflict Cambodia
