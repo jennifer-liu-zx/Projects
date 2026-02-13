@@ -66,7 +66,6 @@ data_GenderPayGap <- read.csv("../data/data_GenderPayGap.csv")
 data_MaternityLeave <- read.csv("../data/data_MaternityLeave.csv")
 data_PaternityLeave <- read.csv("../data/data_PaternityLeave.csv")
 data_GenderEquality <- read.csv("../data/data_GenderEquality.csv")
-data_AttitudesonGenderRoles <- read.csv("../data/data_AttitudesonGenderRoles.csv")
 ```
 
 ## Tidy data
@@ -570,21 +569,6 @@ data_PaternityLeave_tidy <- data_PaternityLeave %>%
                           "Yemen" = "Yemen, Rep.",
                           "Saint Martin" = "St. Martin (French part)"))
 ```
-
-```{r}
-data_AttitudesonGenderRoles_tidy <- data_AttitudesonGenderRoles %>%
-  select(Country, Gender, Gender_ideology_Men_should_prioritize, Gender_ideology_Women_should_prioritize) %>%
-  group_by(Country, Gender) %>%
-  summarise(Men.Role = mean(Gender_ideology_Men_should_prioritize, na.rm=TRUE),
-            Women.Role = mean(Gender_ideology_Women_should_prioritize, na.rm=TRUE),
-            count = n()) %>%
-  filter(count >= 5) %>%
-  group_by(Country) %>%
-  summarise(Men.Role = mean(Men.Role, na.rm=TRUE),
-            Women.Role = mean(Women.Role, na.rm=TRUE)) %>%
-  mutate(Women.More.Home = Men.Role - Women.Role) # more positive greater belief that women should stay home
-```
-Nevermind, this doesn't even have Singapore...
 
 ```{r}
 data_ExpenditureonFamily_tidy <- data_ExpenditureonFamily %>%
