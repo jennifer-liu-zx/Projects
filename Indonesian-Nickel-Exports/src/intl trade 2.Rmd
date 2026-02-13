@@ -1,0 +1,1034 @@
+---
+title: "intl trade 2"
+author: "Jennifer Liu"
+date: "2025-12-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(readr)
+library(readxl)
+library(stringr)
+library(cowplot)
+library(paletteer)
+library(ggrepel)
+```
+
+## Read data
+
+```{r}
+all_nickel <- read.csv("../data/all_nickel_trade_data/all_nickel_2012.csv", row.names = NULL)
+for (year in 2013:2024) {
+  new_df = read.csv(paste0("../data/all_nickel_trade_data/all_nickel_", year, ".csv"), row.names = NULL)
+  all_nickel <- rbind(all_nickel, new_df)
+}
+
+all_nickel <- all_nickel %>%
+  select(
+    Year = refPeriodId,
+    Month = refYear,
+    CountryCode = reporterCode,
+    CountryName = reporterISO,
+    Flow = reporterDesc,
+    HSCode = isOriginalClassification,
+    Value = fobvalue
+  )
+```
+
+## Filter data
+
+```{r}
+all_nickel_X <- all_nickel %>%
+  filter(Flow == "X") %>%
+  group_by(Year, Month, CountryCode, CountryName) %>%
+  summarise(Exports = sum(Value)) %>%
+  ungroup()
+
+all_nickel_yearly_actual <- read.csv("../data/all_nickel_trade_data/all_nickel_yearly.csv", row.names = NULL) %>%
+  select(
+    Year = refPeriodId,
+    CountryCode = reporterCode,
+    CountryName = reporterISO,
+    Flow = reporterDesc,
+    HSCode = isOriginalClassification,
+    Value = fobvalue
+  ) %>%
+  filter(Flow == "X") %>%
+  group_by(Year, CountryCode, CountryName) %>%
+  summarise(Exports = sum(Value)) %>%
+  ungroup()
+```
+
+## Nickel prices
+
+```{r}
+nickel_price <- read.csv("../data/PNICKUSDM_from2011.csv") %>%
+  mutate(Date = date(observation_date)) %>%
+  filter(Date >= "2012-01-01") %>%
+  mutate(Year = as.numeric(substring(observation_date, 1, 4)))
+
+nickel_price_yearly <- nickel_price %>%
+  mutate(Year = substring(observation_date, 1, 4)) %>%
+  group_by(Year) %>%
+  mutate(Year = as.numeric(Year)) %>%
+  summarise(MeanP = mean(PNICKUSDM))
+
+CPI_IDN <- read_xls("../data/API_FP.CPI.TOTL_DS2_en_excel_v2_252315.xls",
+                    sheet = "Data", range = "A4:BQ270") %>%
+  filter(`Country Name` == "Indonesia") %>%
+  select(-`Indicator Name`, -`Indicator Code`) %>%
+  pivot_longer(`1960`:`2024`, names_to = "Year", values_to = "CPI") %>%
+  mutate(Year = as.numeric(Year)) %>%
+  filter(Year > 2010)
+
+USD_to_IDR_conversion <- read.csv("../data/bis_dp_search_export_20251127-202846.csv", skip = 2) %>%
+  mutate(Year = 2011:2024) %>%
+  select(Year, IDR_USD = OBS_VALUE.Value)
+
+real_P <- CPI_IDN %>%
+  left_join(nickel_price, by = c("Year")) %>%
+  mutate(RealP = PNICKUSDM / CPI * 100) %>%
+  drop_na()
+
+real_P_yearly <- CPI_IDN %>%
+  left_join(nickel_price_yearly, by = c("Year")) %>%
+  mutate(RealP = MeanP / CPI * 100) %>%
+  drop_na()
+
+ggplot(real_P) +
+  # annotate("rect", xmin=as.Date("2014-01-01"), xmax=as.Date("2016-12-01"),
+  #          ymin=-Inf, ymax=Inf, alpha=0.4, fill="darkgrey") +
+  # annotate("rect", xmin=as.Date("2020-01-01"), xmax=as.Date("2024-12-31"),
+  #          ymin=-Inf, ymax=Inf, alpha=0.4, fill="darkgrey") +
+  geom_line(aes(x = Date, y = RealP/1e3), alpha = 0.4) +
+  scale_x_date(
+    limits = as.Date(c(NA, "2024-12-31")),
+    date_breaks = "1 year",
+    date_labels = "%Y"
+  ) +
+  geom_line(
+    data = real_P_yearly %>%
+      filter(
+        Year >= 2012,
+        Year <= 2024
+        ) %>%
+      mutate(Date = as.Date(paste0(Year, "-06-01"))),
+    aes(x = Date, y = RealP/1e3),
+    colour = "tomato2", size = 1.1
+  ) +
+  # geom_point(
+  #   data = nickel_price_yearly %>%
+  #     filter(
+  #       Year >= 2012,
+  #       Year <= 2025
+  #       ) %>%
+  #     mutate(Date = as.Date(paste0(Year, "-06-01"))),
+  #   aes(x = Date, y = MeanP/1e3),
+  #   colour = "tomato2"
+  # ) +
+  labs(
+    title = "Yearly Mean Price of Nickel from 2012 to 2025",
+    subtitle = "Price of Nickel Futures on LME, adjusted by Indonesian CPI (100 in 2010)",
+    x = "Date", y = "Price (k USD per Metric Ton)",
+    caption = "Source: Federal Reserve Bank of St. Louis"
+  ) +
+  annotate(geom = "point", x = as.Date("2022-03-01"), y = 20803.46/1e3, colour = "tomato2") +
+  annotate(geom = "text", x = as.Date("2022-06-01"), y = 20600/1e3, size = 3, hjust = 0,
+           label = "Mar 2022: \nPrice surge") +
+  theme_minimal() +
+  theme(panel.grid.minor = element_blank())
+
+max(real_P$RealP)
+```
+
+## Initial plots
+
+```{r}
+# helper function
+
+k_highest_in_period <- function(year, k) {
+  res = all_nickel_yearly_actual %>%
+    filter(Year == year) %>%
+    slice_max(Exports, n = k) %>%
+    pull(CountryCode)
+  return(res)
+}
+
+k_highest_Q_in_period <- function(year, k) {
+  res = nickel_Q %>%
+    filter(Year == year) %>%
+    slice_max(Quantity, n = k) %>%
+    pull(CountryCode)
+  return(res)
+}
+```
+
+```{r}
+# plotting helpers
+
+plot_ban_rects <- function() {
+  list(
+    annotate("rect", xmin=2013.9, xmax=2017.1, ymin=-Inf, ymax=Inf, alpha=0.4, fill="darkgrey"),
+    annotate("rect", xmin=2019.9, xmax=Inf, ymin=-Inf, ymax=Inf, alpha=0.4, fill="darkgrey")
+  )
+}
+
+plot_event_lines <- function() {
+  list(
+    geom_vline(xintercept = 2022, linetype = 2),
+    annotate(geom = "text", x = 2019.85, y = 7, hjust = 1, size = 2.5,
+             label = "2020: Indonesian export\nban starts again"),
+    geom_vline(xintercept = 2020, linetype = 2),
+    annotate(geom = "text", x = 2022.15, y = 7.85, hjust = 0, size = 2.5,
+             label = "2022: Price surge \nin nickel")
+  )
+}
+```
+
+```{r}
+all_nickel_X_yearly <- all_nickel_X %>%
+  group_by(Year, CountryCode) %>%
+  summarise(Exports = sum(Exports)) %>%
+  ungroup()
+
+all_nickel_X_yearly_to_plot <- all_nickel_X_yearly %>%
+  filter(CountryCode != "RUS") %>%
+  filter(CountryCode %in% k_highest_in_period(2019, 11)) %>%
+  left_join(
+    data.frame(
+      CountryCode = k_highest_in_period(2019, 11),
+      rank = seq_along(k_highest_in_period(2019, 1))
+      ),
+    by = c("CountryCode")
+    )
+
+all_nickel_yearly_actual_to_plot <- all_nickel_yearly_actual %>%
+  filter(CountryCode != "RUS") %>%
+  filter(CountryCode %in% k_highest_in_period(2019, 11)) %>%
+  left_join(
+    data.frame(
+      CountryCode = k_highest_in_period(2019, 11),
+      rank = seq_along(k_highest_in_period(2019, 11))
+      ),
+    by = c("CountryCode")
+    )
+
+k_highest_in_period(2019, 11)
+
+```
+
+
+```{r}
+# plotting
+
+ggplot(all_nickel_X_yearly_to_plot) +
+  plot_ban_rects() +
+  plot_event_lines() +
+  geom_line(aes(x = Year, y = Exports/1e9, group = CountryCode, colour = rank)) +
+  geom_text(
+    data = all_nickel_X_yearly_to_plot %>%
+      filter(Year == 2024) %>%
+      select(CountryCode, LastX = Exports, rank),
+    aes(x = 2024.2, y = LastX/1e9, label = CountryCode),
+    hjust = 0, size = 2.5
+    ) +
+  scale_colour_gradient2(low = "orange", mid = "mediumseagreen", high = "royalblue", midpoint = 6) +
+  geom_line(
+    data = all_nickel_X_yearly_to_plot %>% filter(CountryCode == "IDN"),
+    aes(x = Year, y = Exports/1e9, group = CountryCode),
+    colour = "tomato", linewidth = 1
+    ) +
+  geom_text(
+    data = all_nickel_X_yearly_to_plot %>%
+      filter(Year == 2024) %>%
+      select(CountryCode, LastX = Exports, rank) %>%
+      filter(CountryCode == "IDN"),
+    aes(x = 2024.2, y = LastX/1e9, label = CountryCode),
+    colour = "tomato", hjust = 0, size = 2.5, fontface = "bold"
+    ) +
+  scale_x_continuous(limits = c(2012, 2024.5), breaks = 2012:2024) +
+  labs(
+    title = "Nickel Exports of Top Exporting Countries from 2012 to 2024",
+    subtitle = "Top 8 Exporters in Dec 2019, excluding Russia",
+    x = "Year", y = "Value of Exports (Billion USD)",
+    caption = "Source: UN Comtrade Database"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "None")
+
+ggplot(all_nickel_yearly_actual_to_plot) +
+  plot_ban_rects() +
+  plot_event_lines() +
+  geom_line(aes(x = Year, y = Exports/1e9, group = CountryCode, colour = rank)) +
+  geom_text(
+    data = all_nickel_yearly_actual_to_plot %>%
+      filter(Year == 2024) %>%
+      select(CountryCode, LastX = Exports, rank),
+    aes(x = 2024.2, y = LastX/1e9, label = CountryCode),
+    hjust = 0, size = 2.5
+    ) +
+  scale_colour_gradient2(low = "orange", mid = "mediumseagreen", high = "royalblue", midpoint = 6) +
+  geom_line(
+    data = all_nickel_yearly_actual_to_plot %>% filter(CountryCode == "IDN"),
+    aes(x = Year, y = Exports/1e9, group = CountryCode),
+    colour = "tomato2", linewidth = 1
+    ) +
+  geom_text(
+    data = all_nickel_yearly_actual_to_plot %>%
+      filter(Year == 2024) %>%
+      select(CountryCode, LastX = Exports, rank) %>%
+      filter(CountryCode == "IDN"),
+    aes(x = 2024.2, y = LastX/1e9, label = CountryCode),
+    colour = "tomato2", hjust = 0, size = 2.5, fontface = "bold"
+    ) +
+  scale_x_continuous(limits = c(2013, 2024.5), breaks = 2013:2024) +
+  labs(
+    title = "Nickel Exports of Top Exporting Countries from 2012 to 2024",
+    subtitle = "Top 10 Exporters in Dec 2019, excluding Russia",
+    x = "Year", y = "Value of Exports (Billion USD)",
+    caption = "Source: UN Comtrade Database"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "None")
+```
+
+```{r}
+nickel_Q <- all_nickel_yearly_actual %>%
+  left_join(nickel_price_yearly, by = "Year") %>%
+  mutate(Quantity = Exports / Year)
+
+to_plot_nickel_Q <- nickel_Q %>%
+  filter(CountryCode != "RUS") %>%
+  filter(CountryCode %in% k_highest_Q_in_period(2019, 9)) %>%
+  left_join(
+    data.frame(
+      CountryCode = k_highest_Q_in_period(2019, 9),
+      rank = seq_along(k_highest_Q_in_period(2019, 9))
+      ),
+    by = c("CountryCode")
+    )
+
+ggplot(to_plot_nickel_Q) +
+  list(
+    geom_vline(xintercept = 2022, linetype = 2),
+    annotate(geom = "text", x = 2022.15, y = 3.9, hjust = 0, size = 2.5,
+             label = "2022: Price surge \nin nickel")
+  ) +
+  geom_line(aes(x = Year, y = Quantity/1e6, group = CountryCode, colour = rank)) +
+  geom_text(
+    data = to_plot_nickel_Q %>%
+      filter(Year == 2024) %>%
+      select(CountryCode, LastQ = Quantity, rank),
+    aes(x = 2024.2, y = LastQ/1e6, label = CountryCode),
+    hjust = 0, size = 2.5
+    ) +
+  scale_colour_gradient2(low = "orange", mid = "mediumseagreen", high = "royalblue", midpoint = 6) +
+  geom_line(
+    data = to_plot_nickel_Q %>% filter(CountryCode == "IDN"),
+    aes(x = Year, y = Quantity/1e6, group = CountryCode),
+    colour = "tomato2", linewidth = 1
+    ) +
+  geom_text(
+    data = to_plot_nickel_Q %>%
+      filter(Year == 2024) %>%
+      select(CountryCode, LastQ = Quantity, rank) %>%
+      filter(CountryCode == "IDN"),
+    aes(x = 2024.2, y = LastQ/1e6, label = CountryCode),
+    colour = "tomato2", hjust = 0, size = 2.5, fontface = "bold"
+    ) +
+  scale_x_continuous(limits = c(2013, 2024.5), breaks = 2013:2024) +
+  labs(
+    title = "Annual Nickel Export Quantity From Top Exporting Countries from 2013 to 2024",
+    subtitle = "Top 8 Exporters in 2019, excluding Russia",
+    x = "Year", y = "Exports (Million Metric Tonnes)",
+    caption = "Source: UN Comtrade Database"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "None")
+```
+
+```{r}
+ggplot(nickel_price) +
+  annotate("rect", xmin=as.Date("2014-01-01"), xmax=as.Date("2016-12-01"),
+           ymin=-Inf, ymax=Inf, alpha=0.4, fill="darkgrey") +
+  annotate("rect", xmin=as.Date("2020-01-01"), xmax=as.Date("2025-01-01"),
+           ymin=-Inf, ymax=Inf, alpha=0.4, fill="darkgrey") +
+  geom_line(aes(x = Date, y = PNICKUSDM/1e3), colour = "royalblue") +
+  scale_x_date(
+    limits = as.Date(c(NA, "2025-01-01")),
+    date_breaks = "1 year",
+    date_labels = "%Y"
+  ) +
+  geom_line(
+    data = nickel_price_yearly %>%
+      filter(
+        Year >= 2012,
+        Year <= 2025
+        ) %>%
+      mutate(Date = as.Date(paste0(Year, "-05-15"))),
+    aes(x = Date, y = MeanP/1e3),
+    alpha = 0.5
+  ) +
+  labs(
+    title = "Monthly Price of Nickel from 2012 to 2025 (k USD per Metric Ton)",
+    subtitle = "Price of Nickel Futures on LME",
+    x = "Date", y = "Price"
+  ) +
+  annotate(geom = "text", x = as.Date("2022-06-01"), y = 33300/1e3, size = 2, hjust = 0,
+           label = "Mar 2022: \nPrice surge") +
+  theme_minimal()
+
+ggplot(nickel_price) +
+  # annotate("rect", xmin=as.Date("2014-01-01"), xmax=as.Date("2016-12-01"),
+  #          ymin=-Inf, ymax=Inf, alpha=0.4, fill="darkgrey") +
+  # annotate("rect", xmin=as.Date("2020-01-01"), xmax=as.Date("2024-12-31"),
+  #          ymin=-Inf, ymax=Inf, alpha=0.4, fill="darkgrey") +
+  geom_line(aes(x = Date, y = PNICKUSDM/1e3), alpha = 0.4) +
+  scale_x_date(
+    limits = as.Date(c(NA, "2024-12-31")),
+    date_breaks = "1 year",
+    date_labels = "%Y"
+  ) +
+  geom_line(
+    data = nickel_price_yearly %>%
+      filter(
+        Year >= 2012,
+        Year <= 2024
+        ) %>%
+      mutate(Date = as.Date(paste0(Year, "-06-01"))),
+    aes(x = Date, y = MeanP/1e3),
+    colour = "tomato2", size = 1.1
+  ) +
+  # geom_point(
+  #   data = nickel_price_yearly %>%
+  #     filter(
+  #       Year >= 2012,
+  #       Year <= 2025
+  #       ) %>%
+  #     mutate(Date = as.Date(paste0(Year, "-06-01"))),
+  #   aes(x = Date, y = MeanP/1e3),
+  #   colour = "tomato2"
+  # ) +
+  labs(
+    title = "Yearly Mean Price of Nickel from 2012 to 2025",
+    subtitle = "Price of Nickel Futures on LME",
+    x = "Date", y = "Price (k USD per Metric Ton)",
+    caption = "Source: "
+  ) +
+  annotate(geom = "point", x = as.Date("2022-03-01"), y = 33924.18/1e3, colour = "tomato2") +
+  annotate(geom = "text", x = as.Date("2022-06-01"), y = 33300/1e3, size = 2, hjust = 0,
+           label = "Mar 2022: \nPrice surge") +
+  theme_minimal() +
+  theme(panel.grid.minor = element_blank())
+```
+
+## Calculating Quantities
+
+```{r}
+nickel_Q <- all_nickel_yearly_actual %>%
+  left_join(nickel_price_yearly, by = c("Year")) %>%
+  mutate(Quantity = Exports / MeanP)
+
+nickel_Q_to_plot <- nickel_Q %>%
+  filter(CountryCode %in% k_highest_in_period(2019, 10)) %>%
+  left_join(
+    data.frame(
+      CountryCode = k_highest_Q_in_period(2019, 10),
+      rank = seq_along(k_highest_Q_in_period(2019, 10))
+      ),
+    by = c("CountryCode")
+    )
+
+ggplot(nickel_Q_to_plot, aes(x = Year, y = Quantity)) +
+  geom_line(aes(group = CountryCode, colour = rank)) +
+  geom_text(
+    data = nickel_Q_to_plot %>%
+      filter(Year == 2024) %>%
+      select(CountryCode, LastQ = Quantity, rank),
+    aes(x = 2024.2, y = LastQ, label = CountryCode),
+    hjust = 0, size = 2.5
+    ) +
+  scale_colour_gradient2(low = "orange", mid = "mediumseagreen", high = "royalblue", midpoint = 6) +
+  scale_x_continuous(limits = c(2013, 2024.5), breaks = 2013:2024) +
+  theme_minimal() +
+  theme(legend.position = "None")
+```
+
+```{r}
+ggplot(nickel_Q %>%
+         filter(CountryCode == "IDN"), aes(x = MeanP, y = Quantity)) +
+  geom_text(aes(label = Year))
+```
+
+```{r}
+nickel_Q_monthly <- all_nickel_X %>%
+  left_join(nickel_price %>% mutate(
+    Year = as.numeric(substring(observation_date, 1, 4)),
+    Month = as.numeric(substring(observation_date, 6, 7))
+  ), by = c("Year", "Month")) %>%
+  mutate(Quantity = Exports / PNICKUSDM)
+
+nickel_Q_monthly_to_plot <- nickel_Q_monthly %>%
+  filter(CountryCode %in% k_highest_in_period(2019, 10)) %>%
+  left_join(
+    data.frame(
+      CountryCode = k_highest_in_period(2019, 10),
+      rank = seq_along(k_highest_in_period(2019, 10))
+      ),
+    by = c("CountryCode")
+    )
+
+ggplot(nickel_Q_monthly_to_plot, aes(x = Date, y = Quantity)) +
+  geom_line(aes(group = CountryCode, colour = rank)) +
+  scale_colour_gradient2(low = "orange", mid = "mediumseagreen", high = "royalblue", midpoint = 6) +
+  scale_x_date(
+    limits = as.Date(c(NA, "2025-01-01")),
+    date_breaks = "1 year",
+    date_labels = "%Y"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "None")
+```
+
+## Run regression
+
+```{r}
+library(fixest)
+```
+
+```{r}
+reg_df <- all_nickel_yearly_actual %>%
+  left_join(nickel_price_yearly, by = "Year") %>%
+  mutate(
+    Quantity = Exports / MeanP,
+    ExportBan = ifelse((((Year >= 2014) & (Year <= 2016)) | (Year >= 2020) & (CountryCode == "IDN")), 1, 0),
+    COVID_dummy = ifelse(Year == 2020, 1, 0)
+  ) %>%
+  mutate(
+    Int = ExportBan * MeanP
+  )
+
+reg_df <- all_nickel_yearly_actual %>%
+  left_join(nickel_price_yearly, by = "Year") %>%
+  mutate(
+    Quantity = Exports / MeanP,
+    ExportBan = ifelse(((Year >= 2014) & (CountryCode == "IDN")), 1, 0),
+    COVID_dummy = ifelse(Year == 2020, 1, 0)
+  ) %>%
+  mutate(
+    Int = ExportBan * MeanP
+  )
+
+extra_df <- reg_df %>%
+  group_by(CountryCode) %>%
+  mutate(mean_Q = mean(Quantity)) %>%
+  ungroup() %>%
+  mutate(translated_Q = Quantity - mean_Q) %>%
+  group_by(Year) %>%
+  mutate(adj = (ifelse(CountryCode == "IDN", 1, 115)) ** 0.5) %>%
+  ungroup() %>%
+  group_by(Year, I_IDN = CountryCode == "IDN") %>%
+  summarise(mean_Q = sum(translated_Q) / mean(adj)) %>%
+  pivot_wider(names_from = I_IDN, values_from = mean_Q) %>%
+  mutate(diff = `TRUE` - `FALSE`)
+```
+
+```{r}
+ggplot(reg_df, aes(x = Year, y = Quantity)) +
+  geom_line(aes(group = CountryCode, alpha = ifelse(CountryCode == "IDN", 1, 0.6))) +
+  geom_line(data = reg_df %>% 
+              filter(CountryCode != "IDN") %>%
+              group_by(Year) %>%
+              summarise(Mean_Q = mean(Quantity)), aes(x = Year, y = Mean_Q * 10), colour = "tomato") +
+  geom_vline(xintercept = 2014, linetype = 2, 201) +
+  theme_minimal()
+
+ggplot(reg_df  %>%
+              filter(CountryCode %in% k_highest_in_period(2019, 10)), aes(x = Year, y = Quantity)) +
+  geom_line(aes(group = CountryCode, alpha = ifelse(CountryCode == "IDN", 1, 0.6))) +
+  geom_line(data = reg_df %>% 
+              filter(CountryCode != "IDN") %>%
+              filter(CountryCode %in% k_highest_in_period(2019, 10)) %>%
+              group_by(Year) %>%
+              summarise(Mean_Q = mean(Quantity)), aes(x = Year, y = Mean_Q), colour = "tomato") +
+  geom_vline(xintercept = 2014, linetype = 2, 201) +
+  theme_minimal()
+
+ggplot(reg_df %>% filter(CountryCode == "IDN"), aes(x = Year, y = log(Quantity))) +
+  plot_ban_rects() +
+  geom_line() +
+  geom_line(data = reg_df %>% 
+              filter(CountryCode != "IDN") %>%
+              filter(CountryCode %in% k_highest_in_period(2019, 8)) %>%
+              group_by(Year) %>%
+              summarise(Mean_Q = mean(Quantity)), aes(x = Year, y = log(Mean_Q)), colour = "tomato") +
+  geom_vline(xintercept = 2014, linetype = 2, 201) +
+  scale_x_continuous(breaks = 2013:2024) +
+  theme_minimal()
+
+ggplot(extra_df, aes(x = Year, y = diff)) +
+  geom_line() +
+  geom_line(data = nickel_price_yearly, aes(x = Year, y = (MeanP - mean(MeanP)) * 20), colour = "royalblue", alpha = 0.7) +
+  geom_vline(xintercept = 2014, linetype = 2, 201) +
+  theme_minimal()
+```
+
+```{r}
+base_feols <- feols(
+  Quantity ~ MeanP + ExportBan + Int + COVID_dummy | CountryCode,
+  data = reg_df %>% filter(Year > 2013))
+base_feols
+
+base_feols_log_1 <- feols(
+  log(Quantity) ~ log(MeanP) + ExportBan + ExportBan * log(MeanP) + COVID_dummy | CountryCode,
+  data = reg_df %>% filter(CountryCode %in% k_highest_in_period(2019, 1)))
+log_1_ts = base_feols_log_1$coefficients / base_feols_log_1$se
+df_temp <- data.frame(k = 1, t_p = log_1_ts["log(MeanP)"], t_ban = log_1_ts["ExportBan"], t_int = log_1_ts["log(MeanP):ExportBan"])
+for (i in 2:50) {
+  feols = feols(
+    log(Quantity) ~ log(MeanP) + ExportBan + ExportBan * log(MeanP) + COVID_dummy | CountryCode,
+    data = reg_df %>% filter(CountryCode %in% k_highest_in_period(2019, i)))
+  Ts = feols$coefficients / feols$se
+  new_row = data.frame(
+    k = i,
+    t_p = Ts["log(MeanP)"],
+    t_ban = Ts["ExportBan"],
+    t_int = Ts["log(MeanP):ExportBan"]
+  )
+  df_temp <- rbind(df_temp, new_row)
+}
+ggplot(df_temp, aes(x = k)) +
+  geom_hline(yintercept = -1.96, colour = "tomato", linetype = 2) +
+  geom_hline(yintercept = 1.96, colour = "tomato", linetype = 2) +
+  geom_line(aes(y = t_p), colour = "goldenrod") +
+  geom_line(aes(y = t_ban), colour = "seagreen") +
+  geom_line(aes(y = t_int), colour = "royalblue")
+```
+
+## Simple regression (only Indonesia)
+
+```{r}
+reg_df_1 <- all_nickel_yearly_actual %>%
+  left_join(nickel_price_yearly, by = "Year") %>%
+  mutate(
+    Quantity = Exports / MeanP,
+    After = ifelse(((Year >= 2014) & (Year <= 2016)) | (Year >= 2020), 1, 0),
+    ExportBan = ifelse(CountryCode == "IDN", 1, 0),
+    COVID_dummy = ifelse(Year == 2020, 1, 0)
+  ) %>%
+  mutate(
+    B1 = After,
+    B2 = After * ExportBan,
+    B3 = log(MeanP),
+    B4 = log(MeanP) * After,
+    B5 = log(MeanP) * ExportBan,
+    B6 = log(MeanP) * ExportBan * After,
+    Y = log(Quantity)
+  )
+
+
+reg_df_1 <- all_nickel_yearly_actual %>%
+  left_join(nickel_price_yearly, by = "Year") %>%
+  filter(Year >= 2013) %>%
+  mutate(
+    Quantity = Exports / MeanP,
+    After = ifelse(Year >= 2020, 1, 0),
+    Indo = ifelse(CountryCode == "IDN", 1, 0),
+    COVID_dummy = ifelse(Year == 2020, 1, 0)
+  ) %>%
+  mutate(
+    B1 = After,
+    B2 = Indo,
+    B3 = After * Indo,
+    B4 = log(MeanP),
+    B5 = log(MeanP) * After,
+    B6 = log(MeanP) * Indo,
+    B7 = log(MeanP) * Indo * After,
+    Y = log(Quantity)
+  )
+
+
+base_feols_log <- feols(
+  Y ~ B1 + B3 + B4 + B6 + B7 | CountryCode,
+  data = reg_df_1)
+base_feols_log
+
+base_feols_log <- feols(
+  Y ~ B1 + B3 + B4 + B5 + B6 + B7 | CountryCode,
+  data = reg_df_1 %>% filter(CountryCode != "RUS")
+  # %>% filter(CountryCode %in% k_highest_in_period(2019, 10))
+  , vcov = "hc1")
+etable(base_feols_log)
+# robust to COVID control
+
+base_feols_log <- feols(
+  Y ~ B1 + B3 + B4 + B5 + B6 + B7,
+  data = reg_df_1 %>% filter(CountryCode != "RUS")
+  , vcov = "hc1")
+etable(base_feols_log)
+
+base_feols_log <- feols(
+  Y ~ B3 + B4 | CountryCode + Year,
+  data = reg_df_1 %>% filter(!CountryCode %in% c("RUS", "PHL"))
+  , vcov = "hc1")
+
+base_feols_log <- feols(
+  Y ~ B3 | CountryCode + Year,
+  data = reg_df_1 %>% filter(!CountryCode %in% c("RUS")))
+etable(base_feols_log)
+
+base_feols_log <- feols(
+  Y ~ B3 + B7 | CountryCode + Year,
+  data = reg_df_1 %>% filter(!CountryCode %in% c("RUS")))
+etable(base_feols_log)
+```
+
+
+```{r}
+lm1 <- lm(Quantity ~ MeanP + After + I(MeanP * After) + COVID_dummy, data = reg_df_1 %>%
+            filter(CountryCode == "IDN") %>%
+            mutate(After = Year >= 2022))
+summary(lm1)
+
+lm1 <- lm(log(Quantity) ~ log(MeanP) + After + I(log(MeanP) * After) + COVID_dummy, data = reg_df_1 %>%
+            filter(CountryCode == "IDN") %>%
+            mutate(After = Year >= 2022))
+summary(lm1)
+```
+
+```{r}
+base_feols_log <- feols(
+  log(Quantity) ~ log(MeanP) + ExportBan + ExportBan * log(MeanP) + COVID_dummy,
+  data = reg_df %>% filter(CountryCode %in% k_highest_in_period(2019, 10)),
+  vcov = "hc1")
+base_feols_log
+base_feols_log$coefficients
+base_feols_log$se
+```
+
+Reg formula:
+
+$$ ln(Q) = \beta_{0} + \beta_{1}After_{t} + \beta_{2}After_{t} * ExportBan_{i} + \beta_{3}ln(P_{t}) + \beta_{4}ln(P_{t}) * After_{t} + \beta_{5}ln(Price_{t}) * ExportBan_{i} + \beta_{6}(all 3) $$
+```{r}
+reg_df_3 <- all_nickel_yearly_actual %>%
+  left_join(real_P_yearly, by = "Year") %>%
+  filter(Year >= 2013) %>%
+  mutate(
+    Quantity = Exports / RealP,
+    After = ifelse(Year >= 2022, 1, 0),
+    Indo = ifelse(CountryCode == "IDN", 1, 0),
+    COVID_dummy = ifelse(Year == 2020, 1, 0)
+  ) %>%
+  mutate(
+    B1 = After,
+    B2 = Indo,
+    B3 = After * Indo,
+    B4 = log(RealP),
+    B5 = log(RealP) * After,
+    B6 = log(RealP) * Indo,
+    B7 = log(RealP) * Indo * After,
+    Y = log(Quantity)
+  )
+```
+
+
+```{r}
+feols_log_3 <- feols(
+  Y ~ B4 + B5 + B6 + B7 | CountryCode,
+  data = reg_df_3 %>% filter(!CountryCode %in% c("RUS")))
+etable(feols_log_3)
+```
+
+
+```{r}
+feols_log_event_study_0 <- feols(
+  Y ~ i(Year, ref = 2021) * Indo | CountryCode,
+  data = reg_df_3 %>% filter(!CountryCode %in% c("RUS")))
+etable(feols_log_event_study_0)
+
+feols_log_event_study <- feols(
+  Y ~ i(Year, ref = 2021) * Indo | CountryCode + Year,
+  data = reg_df_3 %>% filter(!CountryCode %in% c("RUS")))
+etable(feols_log_event_study)
+
+event_study_plotting_data <- data.frame(
+  Coefficient = feols_log_event_study$coefficients,
+  se = feols_log_event_study_0$se[1:11]
+) %>%
+  mutate(Year = c(2013:2020, 2022:2024)) %>%
+  mutate(p95_length = se * 1.96)
+
+ref_row <- data.frame(
+  Year       = 2021,
+  Coefficient = 0,
+  se = 0,
+  p95_length = 0
+)
+plot_df <- rbind(event_study_plotting_data, ref_row)
+
+ggplot(plot_df, aes(
+  x = Year,
+  y = Coefficient,
+  ymin = Coefficient - p95_length,
+  ymax = Coefficient + p95_length
+  )) + 
+  geom_hline(yintercept = 0, colour = "grey") +
+  geom_vline(xintercept = 2021, linetype = 2) +
+  geom_pointrange() +
+  geom_line() +
+  scale_x_continuous(breaks = 2013:2024) +
+  labs(title = "Event Study of Effect of Downstreaming Policies on Export Level") +
+  theme_minimal()
+```
+
+
+```{r}
+feols_log_event_study_2 <- feols(
+  Y ~ i(Year, ref = 2021) * Indo * log(MeanP) | CountryCode,
+  data = reg_df_1 %>% filter(!CountryCode %in% c("RUS")))
+etable(feols_log_event_study_2)
+
+event_study_plotting_data <- data.frame(
+  Coefficient = feols_log_event_study$coefficients[12:22],
+  se = feols_log_event_study$se[1:11]
+) %>%
+  mutate(Year = c(2013:2020, 2022:2024)) %>%
+  mutate(p95_length = se * 1.96)
+
+ref_row <- data.frame(
+  Year       = 2021,
+  Coefficient = 0,
+  se = 0,
+  p95_length = 0
+)
+plot_df <- rbind(event_study_plotting_data, ref_row)
+
+ggplot(plot_df, aes(
+  x = Year,
+  y = Coefficient,
+  ymin = Coefficient - p95_length,
+  ymax = Coefficient + p95_length
+  )) + 
+  geom_hline(yintercept = 0, colour = "grey") +
+  geom_vline(xintercept = 2021, linetype = 2) +
+  geom_pointrange() +
+  geom_line() +
+  scale_x_continuous(breaks = 2013:2024) +
+  theme_minimal()
+```
+
+```{r}
+
+reg_df_2 <- all_nickel_yearly_actual %>%
+  left_join(real_P_yearly, by = "Year") %>%
+  filter(Year >= 2013) %>%
+  group_by(CountryCode) %>%
+  mutate(
+    Qt = Exports / RealP,
+    Pt = RealP,
+  ) %>%
+  mutate(
+    Qt_1 = lag(Qt),
+    Pt_1 = lag(Pt)
+  ) %>%
+  ungroup() %>%
+  mutate(
+    Indo = ifelse(CountryCode == "IDN", 1, 0),
+    Downstream = ifelse(Year >= 2020, 1, 0),
+    After = ifelse(Year >= 2022, 1, 0),
+    COVID_dummy = ifelse(Year == 2020, 1, 0),
+    Y = log(Qt / Qt_1),
+    dP = log(Pt / Pt_1)
+  ) %>%
+  drop_na()
+```
+
+```{r}
+feols_log_2 <- feols(
+  Y ~ Indo * Downstream * dP | CountryCode,
+  data = reg_df_2 %>% filter(!CountryCode %in% c("RUS")) %>% filter(CountryCode %in% k_highest_in_period(2019, 20)))
+etable(feols_log_2)
+
+wald(feols_log_2, "dP + dP:Indo = 0")
+```
+
+
+## Number of smelters
+
+https://pubs.usgs.gov/myb/vol3/2023/myb3-2023-indonesia.pdf
+
+```{r}
+num_smelters <- data.frame(
+  Year = c(2013, 2014, 2020, 2023),
+  completed = c(2, 3, 13, 44),
+  constructing = c(0, 0, 0, 44+28),
+  planned = c(0, 0, 0, 44+28+24)
+)
+
+num_complete <- num_smelters %>% select(Year, completed)
+for (i in 2015:2024) {
+  if (i %in% num_smelters$Year) {next}
+  else if (i < 2020) {
+    num_complete <- rbind(
+      num_complete,
+      data.frame(
+        Year = i,
+        completed = num_smelters[2, "completed"] + (num_smelters[3, "completed"] - num_smelters[2, "completed"]) * (i - 2014) / 6
+      )
+    )
+  }
+  else if (i < 2023) {
+    num_complete <- rbind(
+      num_complete,
+      data.frame(
+        Year = i,
+        completed = num_smelters[3, "completed"] + (num_smelters[4, "completed"] - num_smelters[3, "completed"]) * (i - 2020) / 3
+      )
+    )
+  }
+  else {
+    num_complete <- rbind(
+      num_complete,
+      data.frame(
+        Year = i,
+        completed = num_smelters[4, "completed"] + (num_smelters[4, "completed"] - num_smelters[3, "completed"]) * (i - 2023) / 3
+      )
+    )
+  }
+}
+
+ggplot(num_smelters, aes(x = Year)) +
+  geom_col(aes(y = completed), fill = "royalblue") +
+  geom_point(aes(y = completed)) +
+  geom_line(aes(y = completed)) +
+  geom_text(aes(y = completed + 3, label = completed)) +
+  labs(title = "Number of Nickel Smelters in Indonesia",
+       x = "Year", y = "Number of Smelters",
+       caption = "Source: Chung, 2023") +
+  scale_x_continuous(breaks = 2013:2024) +
+  theme_minimal()
+
+ggplot(num_complete, aes(x = Year)) +
+  geom_col(aes(y = completed), fill = "royalblue") +
+  geom_point(aes(y = completed)) +
+  geom_line(aes(y = completed)) +
+  geom_text(aes(y = completed + 3, label = completed)) +
+  labs(title = "Number of Nickel Smelters in Indonesia",
+       x = "Year", y = "Number of Smelters",
+       caption = "Source: ") +
+  scale_x_continuous(breaks = 2013:2024) +
+  theme_minimal()
+```
+
+```{r}
+reg_df_4 <- all_nickel_yearly_actual %>%
+  left_join(real_P_yearly, by = "Year") %>%
+  filter(Year >= 2014) %>%
+  mutate(
+    Quantity = Exports / RealP,
+    Downstream = ifelse(Year >= 2020, 1, 0),
+    Surge = ifelse(Year %in% c(2022), 1, 0),
+    Decline = ifelse(Year %in% c(2023, 2024), 1, 0),
+    After = ifelse(Year >= 2022, 1, 0),
+    Indo = ifelse(CountryCode == "IDN", 1, 0),
+    COVID_dummy = ifelse(Year == 2020, 1, 0)
+  ) %>%
+  left_join(num_complete, by = "Year")
+
+feols_log_4 <- feols(
+  log(Quantity) ~ Surge * log(RealP) + Decline * log(RealP) + Indo * Downstream | CountryCode,
+  data = reg_df_4
+)
+etable(feols_log_4)
+
+feols_log_4 <- feols(
+  log(Quantity) ~ Indo * After * log(RealP) + Indo * Downstream | CountryCode,
+  data = reg_df_4
+)
+etable(feols_log_4)
+
+feols_log_4 <- feols(
+  log(Quantity) ~ After * log(RealP) + completed,
+  data = reg_df_4 %>% filter(CountryCode == "IDN")
+)
+etable(feols_log_4)
+
+feols_log_4 <- feols(
+  log(Quantity) ~ After * log(RealP) + completed * Indo + COVID_dummy | CountryCode,
+  data = reg_df_4
+)
+etable(feols_log_4)
+
+feols_log_4 <- feols(
+  log(Quantity) ~ log(RealP) + Indo * Downstream | CountryCode,
+  data = reg_df_4
+)
+etable(feols_log_4)
+```
+
+```{r}
+# event study
+
+feols_log_4_event_study <- feols(
+  log(Quantity) ~ log(RealP) * i(Year, ref = 2021) + Indo * i(Year, ref = 2021) | CountryCode,
+  data = reg_df_4
+)
+etable(feols_log_4_event_study)
+
+event_study_plotting_data <- data.frame(
+  Coefficient = feols_log_4_event_study$coefficients[12:22],
+  se = feols_log_4_event_study$se[1:11]
+) %>%
+  mutate(Year = c(2013:2020, 2022:2024)) %>%
+  mutate(p95_length = se * 1.96)
+
+ref_row <- data.frame(
+  Year       = 2021,
+  Coefficient = 0,
+  se = 0,
+  p95_length = 0
+)
+plot_df <- rbind(event_study_plotting_data, ref_row)
+
+ggplot(plot_df, aes(
+  x = Year,
+  y = Coefficient,
+  ymin = Coefficient - p95_length,
+  ymax = Coefficient + p95_length
+  )) + 
+  geom_hline(yintercept = 0, colour = "grey") +
+  geom_vline(xintercept = 2021, linetype = 2) +
+  geom_pointrange() +
+  geom_line() +
+  scale_x_continuous(breaks = 2013:2024) +
+  theme_minimal()
+```
+
+
+1,532 trillion
+
+```{r}
+pop_mult = 1.008
+
+df_temp_pop <- data.frame(
+  year = c(2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032, 2033, 2034, 2035),
+  resident = c(4026209, 4044210, 3986842, 4073239, 4149253, 4180868, 4204515, 4204515 * pop_mult,
+                 4204515 * pop_mult ** 2, 4204515 * pop_mult ** 3, 4204515 * pop_mult ** 4, 4204515 * pop_mult ** 5, 4204515 * pop_mult ** 6, 4204515 * pop_mult ** 7, 4204515 * pop_mult ** 8, 4204515 * pop_mult ** 9, 4204515 * pop_mult ** 10),
+  population = c(5703569, 5685807, 5453566, 5637022, 5917648, 6036860, 6111175, 6111175 * pop_mult,
+                 6111175 * pop_mult ** 2, 6111175 * pop_mult ** 3, 6111175 * pop_mult ** 4, 6111175 * pop_mult ** 5, 6111175 * pop_mult ** 6, 6111175 * pop_mult ** 7, 6111175 * pop_mult ** 8, 6111175 * pop_mult ** 9, 6111175 * pop_mult ** 10)
+)
+
+ggplot(df_temp_pop, aes(x = year, y = population)) +
+  geom_line(alpha = 0.5, colour = "royalblue", size = 1.2) +
+  geom_point(alpha = 0.5, colour = "royalblue", size = 3) +
+  geom_line(data = df_temp_pop %>% filter(year <= 2025), colour = "royalblue", size = 1.2) +
+  geom_point(data = df_temp_pop %>% filter(year <= 2025), colour = "royalblue", size = 3) +
+  theme_minimal()
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
