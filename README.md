@@ -20,6 +20,12 @@
 - Language: R
 - Featured methods/packages: linear regression, K-means Clustering, PCA/PCR
 
+### This and That
+- Collection of random small projects
+- Directory: `This-and-That`
+- Languages: SQL, Python
+- Featured methods/packages: sqlalchemy
+
 ## Research and Writing
 
 ### Global Price Shocks and Downstreaming Policy on Indonesia’s Nickel Export Boom
