@@ -692,36 +692,45 @@ ORDER BY "Herfindahl Index" DESC;
 
 -- Only Austin has a very littel competition (0.155), whereas the HI for the rest are very similar and between 0.183 and 0.185.
 
--- 16. Change in composition of engine and transmission in cars solds from 2022 to 2023.
+-- 16. Change in composition of engine and transmission in cars solds from the first 6 months to the last 6 months in the dataset.
 
-WITH engine_trans_year AS (
+WITH engine_trans_period AS (
     SELECT
-        EXTRACT(YEAR FROM date_of_sale::date)::int AS year,
+        CASE
+            WHEN date_of_sale::date BETWEEN DATE '2022-10-01' AND DATE '2023-03-31'
+                THEN 'H1'
+            ELSE 'H2'
+        END AS period,
         engine,
         transmission,
         COUNT(*) AS units
     FROM car_sales
+    WHERE date_of_sale::date BETWEEN DATE '2022-10-01' AND DATE '2023-09-30'
     GROUP BY
-        EXTRACT(YEAR FROM date_of_sale::date)::int,
+        CASE
+            WHEN date_of_sale::date BETWEEN DATE '2022-10-01' AND DATE '2023-03-31'
+                THEN 'H1'
+            ELSE 'H2'
+        END,
         engine,
         transmission
 ),
-year_totals AS (
+period_totals AS (
     SELECT
-        year,
+        period,
         SUM(units) AS total_units
-    FROM engine_trans_year
-    GROUP BY year
+    FROM engine_trans_period
+    GROUP BY period
 )
 SELECT
-    e.year,
-    e.engine,
-    e.transmission,
-    e.units,
-    e.units::numeric / yt.total_units AS share_of_year
-FROM engine_trans_year e
-JOIN year_totals yt
-  ON e.year = yt.year
-ORDER BY e.year, e.engine, e.transmission;
+    e.period AS "Period",
+    e.engine AS "Engine",
+    e.transmission AS "Transmission",
+    e.units AS "Units Sold",
+    e.units::numeric / pt.total_units AS "Share of Period"
+FROM engine_trans_period e
+JOIN period_totals pt
+  ON e.period = pt.period
+ORDER BY e.period, e.engine, e.transmission;
 
---  Share of Auto and Manual cars did not change much. The market share only shifted by 1% from Auto to Manual.
+-- Share of Auto and Manual cars did not change much. Generally, Auto cars are a little more popular than manual cars.
